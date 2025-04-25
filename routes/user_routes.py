@@ -25,3 +25,5 @@ def add_user():
         return redirect(url_for('user_bp.view_users'))
 
     return render_template('add_user.html')
+
+

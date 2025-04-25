@@ -1,14 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New User</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Add New User</h1>
-    <form action="{{ url_for('add_user') }}" method="POST">
+    <form action="{{ url_for('user_bp.add_user') }}" method="POST">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
 
@@ -20,6 +22,9 @@
 
         <button type="submit">Add User</button>
     </form>
-    <a href="{{ url_for('view_users') }}">Back to Users List</a>
+    <a href="{{ url_for('user_bp.view_users') }}" class="btn btn-secondary position-fixed bottom-0 end-0 m-4">
+        ← Back
+    </a>
 </body>
 </html>
+{% endblock %}

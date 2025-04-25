@@ -4,6 +4,9 @@
 <div class="container mt-5">
     <h2 class="text-center">Weekly Menus</h2>
     <a href="{{ url_for('menu_bp.add_menu') }}" class="btn btn-primary mb-3">Add New Menu</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary position-fixed bottom-0 end-0 m-4">
+        ← Home
+    </a>    
     <table class="table table-bordered table-striped">
         <thead>
             <tr>

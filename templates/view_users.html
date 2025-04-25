@@ -4,6 +4,10 @@
 <div class="container mt-5">
     <h2 class="text-center">All Users</h2>
     <a href="{{ url_for('user_bp.add_user') }}" class="btn btn-primary mb-3">Add New User</a>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary position-fixed bottom-0 end-0 m-4">
+        ← Home
+    </a>
+    
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
