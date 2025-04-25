@@ -1,1 +1,5 @@
-<insert reqs here>
+flask
+routes
+sqlalchemy
+os
+dotenv
