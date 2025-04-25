@@ -1,30 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add New User</title>
-</head>
-<body>
-    <h1>Add New User</h1>
-    <form action="{{ url_for('user_bp.add_user') }}" method="POST">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required><br><br>
+<div>
+    <h1 class="text-center">Add New User</h1>
+    <form action="{{ url_for('user_bp.add_user') }}" method="POST" class="form-container">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
 
-        <label for="role">Role:</label>
-        <input type="text" id="role" name="role" required><br><br>
+        <div class="form-group">
+            <label for="role">Role:</label>
+            <input type="text" id="role" name="role" required>
+        </div>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required><br><br>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
 
-        <button type="submit">Add User</button>
+        <input type="submit" value="Add User">
     </form>
-    <a href="{{ url_for('user_bp.view_users') }}" class="btn btn-secondary position-fixed bottom-0 end-0 m-4">
+
+    <a href="{{ url_for('user_bp.view_users') }}" class="btn-back">
         ← Back
     </a>
-</body>
-</html>
+</div>
 {% endblock %}

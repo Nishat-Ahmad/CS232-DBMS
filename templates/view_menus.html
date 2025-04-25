@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
+<div>
     <h2 class="text-center">Weekly Menus</h2>
-    <a href="{{ url_for('menu_bp.add_menu') }}" class="btn btn-primary mb-3">Add New Menu</a>
-    <a href="{{ url_for('index') }}" class="btn btn-secondary position-fixed bottom-0 end-0 m-4">
+    <a href="{{ url_for('menu_bp.add_menu') }}" class="button">Add New Menu</a>
+    <a href="{{ url_for('index') }}" class="btn-back">
         ← Home
     </a>    
-    <table class="table table-bordered table-striped">
+    <table class="custom-table">
         <thead>
             <tr>
                 <th>Menu ID</th>
@@ -25,8 +25,8 @@
                     <td>{{ menu.meal_type }}</td>
                     <td>{{ menu.items }}</td>
                     <td>
-                        <a href="#" class="btn btn-warning btn-sm">Edit</a>
-                        <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                        <a href="#" class="button" style="background-color: rgb(255, 183, 0); padding: 5px 5px;">Edit</a>
+                        <a href="#" class="button" style="background-color: red; padding: 5px 5px;">Delete</a>
                     </td>
                 </tr>
             {% endfor %}

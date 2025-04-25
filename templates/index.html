@@ -3,11 +3,10 @@
 {% block content %}
 <div class="container text-center mt-5">
     <h1>Welcome to the Mess Management System</h1>
-    <p class="lead">Manage your meals, users, and more!</p>
 
     <div class="mt-4">
-        <a href="{{ url_for('user_bp.view_users') }}" class="btn btn-info btn-lg m-2">View Users</a>
-        <a href="{{ url_for('menu_bp.view_menus') }}" class="btn btn-info btn-lg m-2">View Menus</a>
+        <a href="{{ url_for('user_bp.view_users') }}" class="button">View Users</a>
+        <a href="{{ url_for('menu_bp.view_menus') }}" class="button">View Menus</a>
     </div>
 </div>
 {% endblock %}
