@@ -1,4 +1,4 @@
--- 🍽️ Users
+-- Users
 CREATE TABLE Users (
     user_id SERIAL PRIMARY KEY,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -6,7 +6,7 @@ CREATE TABLE Users (
     password VARCHAR(255)
 );
 
--- 📆 Weekly Menu (Template)
+-- Weekly Menu
 CREATE TABLE WeeklyMenu (
     menu_id SERIAL PRIMARY KEY,
     weekday VARCHAR(10) NOT NULL,     -- e.g. 'Monday'
@@ -14,14 +14,14 @@ CREATE TABLE WeeklyMenu (
     items TEXT                        -- e.g. 'Rice, Dal, Paneer'
 );
 
--- 🍛 Meal Instance (Actual meal on a real date)
+-- Meal Instance (Actual meal on a real date)
 CREATE TABLE MealInstance (
     meal_id SERIAL PRIMARY KEY,
     menu_id INT REFERENCES WeeklyMenu(menu_id) ON DELETE CASCADE,
     date DATE NOT NULL                -- e.g. '2025-04-21'
 );
 
--- 🙋 Attendance (who showed up for which meal)
+-- Attendance (who showed up for which meal)
 CREATE TABLE Attendance (
     attendance_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES Users(user_id) ON DELETE CASCADE,
@@ -30,7 +30,7 @@ CREATE TABLE Attendance (
     UNIQUE(user_id, meal_id)         -- prevent duplicates
 );
 
--- 💸 Billing (how much each user owes)
+-- Billing (how much each user owes)
 CREATE TABLE Billing (
     bill_id SERIAL PRIMARY KEY,
     user_id INT REFERENCES Users(user_id) ON DELETE CASCADE,
@@ -42,7 +42,7 @@ CREATE TABLE Billing (
     is_paid BOOLEAN DEFAULT FALSE
 );
 
--- 📦 Inventory (optional but useful)
+-- Inventory (optional but useful)
 CREATE TABLE Inventory (
     item_id SERIAL PRIMARY KEY,
     name VARCHAR(255),
