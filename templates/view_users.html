@@ -4,14 +4,13 @@
 <div>
     <h2 class="text-center">All Users</h2>
     <a href="{{ url_for('user_bp.add_user') }}" class="button">Add New User</a>
-    <a href="{{ url_for('index') }}" class="btn-back">
-        ← Home
-    </a>
-    
+    <a href="{{ url_for('index') }}" class="btn-back">← Home</a>
+
     <table class="custom-table">
         <thead>
             <tr>
                 <th>User ID</th>
+                <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
                 <th>Actions</th>
@@ -19,15 +18,16 @@
         </thead>
         <tbody>
             {% for user in users %}
-                <tr>
-                    <td>{{ user.user_id }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.role }}</td>
-                    <td>
-                        <a href="#" class="button" style="background-color: rgb(255, 183, 0); padding: 5px 5px;">Edit</a>
-                        <a href="#" class="button" style="background-color: red; padding: 5px 5px;">Delete</a>
-                    </td>
-                </tr>
+            <tr>
+                <td>{{ user.user_id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.role }}</td>
+                <td>
+                    <a href="{{ url_for('user_bp.edit_user', user_id=user.id) }}" class="button" style="background-color: orange;">Edit</a>
+                    <a href="{{ url_for('user_bp.delete_user', user_id=user.id) }}" class="button" style="background-color: red;">Delete</a>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
