@@ -4,13 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mess Management System</title>
-    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-
-{% block content %}
-{% endblock %}
-
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/giki-logo.png') }}" alt="Logo" class="company-logo">
+                <a class="logo" href="{{ url_for('index') }}">Mess Management System</a>
+            </div>
+            <input type="checkbox" id="menu-toggle-checkbox" class="menu-toggle-checkbox">
+            <label for="menu-toggle-checkbox" class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </label>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('meal_bp.view_meals') }}">Meals</a></li>
+                <li><a href="{{ url_for('user_bp.view_users') }}">Users</a></li>
+                
+                {% if session.get('user_id') %}
+                    <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth_bp.login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    
+    {% block content %}
+    {% endblock %}
+    
+    <footer>
+        <div class="container">
+            <p>© 2025 Autism               Web Dev Department. All rights reserved.</p>
+            <p>made by 2023073, 2023495, Nigga T</p>
+        </div>
+    </footer>
 </body>
 </html>

@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from main import Meal, Session
+from database.models import Meal, Session
 from utils.auth_decorators import login_required, admin_required
 
 meal_bp = Blueprint('meal_bp', __name__, url_prefix='/meals')

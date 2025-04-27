@@ -1,24 +1,29 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-    <h1 class="text-center">Login</h1>
-    <form action="{{ url_for('auth_bp.login') }}" method="POST" class="form-container">
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
+<section class="features">
+    <div class="container">
+        <h2>Login</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('auth_bp.login') }}" method="POST">
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <div style="margin-top: 20px;">
+                    <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <input type="submit" value="Login" class="button">
-    </form>
-
-    <a href="{{ url_for('index') }}" class="btn-back">
-        ← Back
-    </a>
-</div>
+    </div>
+</section>
 {% endblock %}

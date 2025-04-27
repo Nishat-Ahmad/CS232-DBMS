@@ -1,35 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-    <h2 class="text-center">All Users</h2>
-    <a href="{{ url_for('user_bp.add_user') }}" class="button">Add New User</a>
-    <a href="{{ url_for('index') }}" class="btn-back">← Home</a>
-
-    <table class="custom-table">
-        <thead>
-            <tr>
-                <th>User ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for user in users %}
-            <tr>
-                <td>{{ user.user_id }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.role }}</td>
-                <td>
-                    <a href="{{ url_for('user_bp.edit_user', user_id=user.id) }}" class="button" style="background-color: orange;">Edit</a>
-                    <a href="{{ url_for('user_bp.delete_user', user_id=user.id) }}" class="button" style="background-color: red;">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<section class="features">
+    <div class="container">
+        <h2>All Users</h2>
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('user_bp.add_user') }}" class="btn">Add New User</a>
+            <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+        </div>
+        
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>
+                            <a href="{{ url_for('user_bp.edit_user', user_id=user.id) }}" class="btn" style="background-color: orange; color: white;">Edit</a>
+                            <a href="{{ url_for('user_bp.delete_user', user_id=user.id) }}" class="btn" style="background-color: #dc3545; color: white;">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 {% endblock %}

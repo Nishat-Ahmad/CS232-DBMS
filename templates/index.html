@@ -1,17 +1,37 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-    <h1 class="text-center">Welcome to the Mess Management System</h1>
-
-    <div class="mt-4 text-center">
-        {% if session.get('user_id') %}
-            <a href="{{ url_for('user_bp.view_users') }}" class="button">Manage Users</a>
-            <a href="{{ url_for('meal_bp.view_meals') }}" class="button">Manage Meals</a>
-            <a href="{{ url_for('auth_bp.logout') }}" class="button" style="background-color: red;">Logout</a>
-        {% else %}
-            <a href="{{ url_for('auth_bp.login') }}" class="button">Login</a>
-        {% endif %}
+<header>
+    <div class="container">
+        <h1>Welcome to Mess Management System</h1>
+        <p>Efficiently manage your mess operations, attendance, and billing</p>
+        <button class="btn">Get Started</button>
     </div>
-</div>
+</header>
+
+<section class="features">
+    <div class="container">
+        <h2>Our Features</h2>
+        <div class="feature-cards">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Menu Management</h3>
+                    <p>Plan and manage daily, weekly and monthly mess menus with ease.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3>Attendance Tracking</h3>
+                    <p>Track student attendance and meal counts accurately.</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h3>Billing System</h3>
+                    <p>Automated billing based on attendance and special meals.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

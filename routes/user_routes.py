@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from main import User, Session
+from database.models import User, Session
 from utils.auth_decorators import login_required, admin_required
 
 user_bp = Blueprint('user_bp', __name__, url_prefix='/users')

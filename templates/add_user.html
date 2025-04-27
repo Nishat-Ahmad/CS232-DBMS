@@ -1,34 +1,39 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div>
-    <h1 class="text-center">Add New User</h1>
-    <form action="{{ url_for('user_bp.add_user') }}" method="POST" class="form-container">
-        <div class="form-group">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required>
+<section class="features">
+    <div class="container">
+        <h2>Add New User</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('user_bp.add_user') }}" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role">Role:</label>
+                        <input type="text" id="role" name="role" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn">Add User</button>
+                </form>
+                <div style="margin-top: 20px;">
+                    <a href="{{ url_for('user_bp.view_users') }}" class="btn">Back to Users</a>
+                </div>
+            </div>
         </div>
-
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
-
-        <div class="form-group">
-            <label for="role">Role:</label>
-            <input type="text" id="role" name="role" required>
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-        </div>
-
-        <input type="submit" value="Add User" class="button">
-    </form>
-
-    <a href="{{ url_for('user_bp.view_users') }}" class="btn-back">
-        ← Back
-    </a>
-</div>
+    </div>
+</section>
 {% endblock %}
