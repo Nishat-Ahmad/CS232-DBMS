@@ -1,5 +1,5 @@
-flask
-routes
-sqlalchemy
-os
-dotenv
+Flask
+SQLAlchemy
+psycopg2-binary
+python-dotenv
+
