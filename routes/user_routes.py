@@ -1,5 +1,5 @@
-from flask import Blueprint, render_template, request, redirect, url_for
-from database.models import User, Session
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from database.models import Session, User, Admin, Student
 from utils.auth_decorators import login_required, admin_required
 
 user_bp = Blueprint('user_bp', __name__, url_prefix='/users')
@@ -8,50 +8,76 @@ user_bp = Blueprint('user_bp', __name__, url_prefix='/users')
 @login_required
 @admin_required
 def view_users():
-    session = Session()
-    users = session.query(User).all()
-    session.close()
-    return render_template('view_users.html', users=users)
+    db = Session()
+    students = db.query(Student).all()
+    admins = db.query(Admin).all()
+    db.close()
+    return render_template('view_users.html', students=students, admins=admins)
 
 @user_bp.route('/add', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def add_user():
+    role = 'student'  # Default to 'student' if the user hasn't selected a role yet.
+
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        role = request.form['role']
+        role = request.form['role']  # Get the role from the form
+        roll_number = request.form.get('roll_number')  # Only for students
+        admin_level = request.form.get('admin_level')  # Only for admins
 
         session = Session()
-        new_user = User(name=name, email=email, password=password, role=role)
+
+        # Create the user object
+        if role == 'student':
+            new_user = Student(name=name, email=email, password=(password), role=role, roll_number=roll_number)
+        else:  # Admin
+            new_user = Admin(name=name, email=email, password=(password), role=role, admin_level=admin_level)
+
         session.add(new_user)
         session.commit()
         session.close()
+
+        flash(f'User {name} added successfully!', 'success')
         return redirect(url_for('user_bp.view_users'))
 
-    return render_template('add_user.html')
+    return render_template('add_user.html', role=role)  # Pass the role here
+
 
 @user_bp.route('/edit/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def edit_user(user_id):
-    session = Session()
-    user = session.query(User).get(user_id)
+    db = Session()
+    user = db.query(User).get(user_id)
 
     if request.method == 'POST':
         user.name = request.form['name']
         user.email = request.form['email']
         user.password = request.form['password']
-        user.role = request.form['role']
-        session.commit()
-        session.close()
+        user.roll_number = request.form['roll_number']
+        db.commit()
+        db.close()
+        flash('User updated.', 'success')
         return redirect(url_for('user_bp.view_users'))
 
-    session.close()
-    return render_template('edit_user.html', user=user)
+    # 🛠️ Delay closing until after render_template
+    response = render_template('edit_user.html', user=user)
+    db.close()
+    return response
+
+    
 
 @user_bp.route('/delete/<int:user_id>')
+@login_required
+@admin_required
 def delete_user(user_id):
-    session = Session()
-    user = session.query(User).get(user_id)
-    session.delete(user)
-    session.commit()
-    session.close()
+    db = Session()
+    user = db.query(User).get(user_id)
+    db.delete(user)
+    db.commit()
+    db.close()
+    flash('User deleted.', 'info')
     return redirect(url_for('user_bp.view_users'))

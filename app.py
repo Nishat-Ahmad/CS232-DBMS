@@ -1,4 +1,7 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, g
+from flask import session
+from database import models  # Correct import
+
 from routes.user_routes import user_bp
 from routes.meal_routes import meal_bp
 from routes.auth_routes import auth_bp
@@ -11,6 +14,18 @@ app.register_blueprint(user_bp)
 app.register_blueprint(meal_bp)
 app.register_blueprint(auth_bp)
 
+# Load user from session before each request
+@app.before_request
+def load_user():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        db_session = models.Session()  # Use the Session from models
+        user = db_session.query(models.User).get(user_id)  # Use User from models
+        g.user = user  # Store user in g for easy access across views
+        db_session.close()
+    else:
+        g.user = None  # No user logged in
+
 # Routes
 @app.route('/')
 def index():
@@ -18,4 +33,3 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True)
-

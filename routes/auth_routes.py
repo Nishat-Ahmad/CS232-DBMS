@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session as flask_session, flash
 from werkzeug.security import check_password_hash
 from database.models import Session, User
 
@@ -10,23 +10,29 @@ def login():
         email = request.form['email']
         password = request.form['password']
 
-        session_db = Session()
-        user = session_db.query(User).filter_by(email=email).first()
-        session_db.close()
+        db_session = Session()
+        user = db_session.query(User).filter_by(email=email).first()
 
-        if user and user.password == password:
-            session['user_id'] = user.id
-            session['user_role'] = user.role
-            flash('Logged in successfully.', 'success')
+        print("Email:", email)
+        print("User in DB:", user)
+        if user:
+            print("Password match:", (user.password, password))
+            print("User ID:", user.id, "Role:", user.role)
+
+        if user and (user.password, password):
+            flask_session['user_id'] = user.id
+            flask_session['user_role'] = user.role
+            db_session.close()
             return redirect(url_for('index'))
-        else:
-            flash('Invalid email or password.', 'danger')
-            return redirect(url_for('auth_bp.login'))
-    
+
+        db_session.close()
+        flash("Invalid email or password", 'danger')
+        return redirect(url_for('auth_bp.login'))
+
     return render_template('login.html')
 
 @auth_bp.route('/logout')
 def logout():
-    session.clear()
+    flask_session.clear()
     flash('Logged out.', 'info')
     return redirect(url_for('index'))

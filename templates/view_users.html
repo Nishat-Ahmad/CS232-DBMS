@@ -9,33 +9,61 @@
             <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
         </div>
         
-        <div class="menu-table-container">
-            <table class="menu-table">
-                <thead>
-                    <tr>
-                        <th>User ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.role }}</td>
-                        <td>
-                            <a href="{{ url_for('user_bp.edit_user', user_id=user.id) }}" class="btn" style="background-color: orange; color: white;">Edit</a>
-                            <a href="{{ url_for('user_bp.delete_user', user_id=user.id) }}" class="btn" style="background-color: #dc3545; color: white;">Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        <!-- Admins Section -->
+        <h3>Admins</h3>
+        <table class="menu-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in admins %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>admin</td>
+                    <td>
+                        <a href="{{ url_for('user_bp.edit_user', user_id=user.id) }}" class="btn" style="background-color: orange; color: white;">Edit</a>
+                        <a href="{{ url_for('user_bp.delete_user', user_id=user.id) }}" class="btn" style="background-color: #dc3545; color: white;">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Students Section -->
+        <h3 style="margin-top: 30px;">Students</h3>
+        <table class="menu-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in students %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>student</td>
+                    <td>
+                        <a href="{{ url_for('user_bp.edit_user', user_id=user.id) }}" class="btn" style="background-color: orange; color: white;">Edit</a>
+                        <a href="{{ url_for('user_bp.delete_user', user_id=user.id) }}" class="btn" style="background-color: #dc3545; color: white;">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </section>
 {% endblock %}

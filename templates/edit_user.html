@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Edit User</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="{{ url_for('user_bp.edit_user', user_id=user.id) }}" method="POST">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" value="{{ user.name }}" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="text" id="password" name="password" value="{{ user.password }}" required class="form-control">
+                    </div>
+                    <div class="form-group" id="roll_number_group" {% if user.role == 'student' %}style="display: block;"{% else %}style="display: none;"{% endif %}>
+                        <label for="roll_number">Roll Number:</label>
+                        <input type="text" id="roll_number" name="roll_number" value="{{ user.roll_number if user.role == 'student' else '' }}" class="form-control">
+                    </div>    
+                    <button type="submit" class="btn">Save Changes</button>
+                </form>
+                <div style="margin-top: 20px;">
+                    <a href="{{ url_for('user_bp.view_users') }}" class="btn">Back to Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

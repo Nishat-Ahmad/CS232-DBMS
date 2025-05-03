@@ -19,7 +19,22 @@
 
                     <div class="form-group">
                         <label for="role">Role:</label>
-                        <input type="text" id="role" name="role" required class="form-control">
+                        <select id="role" name="role" required class="form-control" onchange="toggleFields()">
+                            <option value="student" {% if role == 'student' %}selected{% endif %}>Student</option>
+                            <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
+                        </select>
+                    </div>
+
+                    <!-- Roll Number Field - Only for students -->
+                    <div class="form-group" id="roll_number_group" style="display: {% if role == 'student' %}block{% else %}none{% endif %};">
+                        <label for="roll_number">Roll Number:</label>
+                        <input type="text" id="roll_number" name="roll_number" class="form-control">
+                    </div>
+
+                    <!-- Admin Level Field - Only for admins -->
+                    <div class="form-group" id="admin_level_group" style="display: {% if role == 'admin' %}block{% else %}none{% endif %};">
+                        <label for="admin_level">Admin Level:</label>
+                        <input type="text" id="admin_level" name="admin_level" class="form-control">
                     </div>
 
                     <div class="form-group">
@@ -36,4 +51,25 @@
         </div>
     </div>
 </section>
+
+<script>
+    // Function to toggle the visibility of Roll Number and Admin Level fields based on the role selected
+    function toggleFields() {
+        var role = document.getElementById('role').value;  // Get the selected role
+        var rollNumberGroup = document.getElementById('roll_number_group');  // Roll number input container
+        var adminLevelGroup = document.getElementById('admin_level_group');  // Admin level input container
+
+        // Show or hide fields based on role
+        if (role === 'student') {
+            rollNumberGroup.style.display = 'block';  // Show the roll number field if student is selected
+            adminLevelGroup.style.display = 'none';   // Hide the admin level field if student is selected
+        } else if (role === 'admin') {
+            rollNumberGroup.style.display = 'none';   // Hide the roll number field if admin is selected
+            adminLevelGroup.style.display = 'block';  // Show the admin level field if admin is selected
+        }
+    }
+
+    // Initialize the page state based on the role (in case it was passed as 'admin' or 'student')
+    toggleFields();
+</script>
 {% endblock %}

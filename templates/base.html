@@ -24,7 +24,7 @@
                 <li><a href="{{ url_for('meal_bp.view_meals') }}">Meals</a></li>
                 <li><a href="{{ url_for('user_bp.view_users') }}">Users</a></li>
                 
-                {% if session.get('user_id') %}
+                {% if g.user %}
                     <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                 {% else %}
                     <li><a href="{{ url_for('auth_bp.login') }}">Login</a></li>
