@@ -1,6 +1,6 @@
 from flask import Flask, render_template, g
 from flask import session
-from database import models  # Correct import
+from database import models
 
 from routes.user_routes import user_bp
 from routes.meal_routes import meal_bp

@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session as flask_session, flash
-from werkzeug.security import check_password_hash
 from database.models import Session, User
 
 auth_bp = Blueprint('auth_bp', __name__, url_prefix='/auth')
