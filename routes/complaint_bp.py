@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from database.models import Session, Complaint, Student
 from flask import session as flask_session
-from utils.auth_decorators import login_required, student_required
+from utils.auth_decorators import login_required, student_required, admin_required
+from database.models import Session, Complaint
+from sqlalchemy.orm import joinedload
 
 complaint_bp = Blueprint('complaint_bp', __name__, url_prefix='/complaint')
 
@@ -32,3 +33,43 @@ def create_complaint():
 
     return render_template('create_complaint.html')  # Render complaint form page
 
+# Route to view unresolved complaints
+@complaint_bp.route('/complaints')
+@login_required
+@admin_required
+def view_complaints():
+    db_session = Session()
+    complaints = db_session.query(Complaint) \
+        .options(joinedload(Complaint.student)) \
+        .filter(Complaint.status != 'resolved') \
+        .all()
+    db_session.close()
+    return render_template('resolve_complaints.html', complaints=complaints)
+
+# Route to view resolved complaints
+@complaint_bp.route('/complaints/resolved')
+@login_required
+@admin_required
+def view_resolved_complaints():
+    db_session = Session()
+    complaints = db_session.query(Complaint) \
+        .options(joinedload(Complaint.student)) \
+        .filter(Complaint.status == 'resolved') \
+        .all()
+    db_session.close()
+    return render_template('resolved_complaints.html', complaints=complaints)
+
+# Route to resolve a complaint
+@complaint_bp.route('/complaints/resolve/<int:id>', methods=['POST'])
+@login_required
+@admin_required
+def resolve_complaint(id):
+    db_session = Session()
+    complaint = db_session.get(Complaint, id)  # Fetch complaint by ID
+    if complaint:
+        complaint.status = 'resolved'
+        db_session.commit()  # Commit changes to the database
+        flash("Complaint marked as resolved", 'success')
+
+    db_session.close()
+    return redirect(url_for('complaint_bp.view_complaints'))

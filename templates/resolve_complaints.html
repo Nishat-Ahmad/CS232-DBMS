@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resolved Complaints</title>
+    <title>Unresolved Complaints</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <style>
         .wrap-text {
@@ -22,8 +22,8 @@
             </div>
             <ul class="nav-menu">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('admin_bp.view_resolved_complaints') }}">Resolved Complaints</a></li>
-                <li><a href="{{ url_for('admin_bp.view_complaints') }}">Check Complaints</a></li>
+                <li><a href="{{ url_for('complaint_bp.view_resolved_complaints') }}">Resolved Complaints</a></li>
+                <li><a href="{{ url_for('complaint_bp.view_complaints') }}">Check Complaints</a></li>
                 {% if g.user %}
                     <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                 {% else %}
@@ -34,7 +34,7 @@
     </nav>
 
     <div class="container">
-        <h1>Resolved Complaints</h1>
+        <h1>Unresolved Complaints</h1>
         <table>
             <thead>
                 <tr>
@@ -42,6 +42,7 @@
                     <th>Complaint ID</th>
                     <th>Message</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,6 +52,15 @@
                         <td>{{ complaint.id }}</td>
                         <td class="wrap-text">{{ complaint.message }}</td>
                         <td>{{ complaint.status }}</td>
+                        <td>
+                            {% if complaint.status != 'resolved' %}
+                                <form action="{{ url_for('complaint_bp.resolve_complaint', id=complaint.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit">Resolve</button>
+                                </form>
+                            {% else %}
+                                <span>Resolved</span>
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
