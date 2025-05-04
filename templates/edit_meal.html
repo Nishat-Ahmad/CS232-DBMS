@@ -3,31 +3,31 @@
 {% block content %}
 <section class="features">
     <div class="container">
-        <h2>Add New Meal</h2>
+        <h2>Edit Meal</h2>
         <div class="card">
             <div class="card-body">
-                <form action="{{ url_for('meal_bp.add_meal') }}" method="POST">
+                <form action="{{ url_for('meal_bp.edit_meal', meal_id=meal.id) }}" method="POST">
                     <div class="form-group">
                         <label for="name">Meal Name:</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
+                        <input type="text" id="name" name="name" value="{{ meal.name }}" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="time">Meal Time:</label>
                         <select id="time" name="time" class="form-control" required>
-                            <option value="breakfast">Breakfast</option>
-                            <option value="lunch">Lunch</option>
-                            <option value="dinner">Dinner</option>
+                            <option value="breakfast" {% if meal.time == 'breakfast' %}selected{% endif %}>Breakfast</option>
+                            <option value="lunch" {% if meal.time == 'lunch' %}selected{% endif %}>Lunch</option>
+                            <option value="dinner" {% if meal.time == 'dinner' %}selected{% endif %}>Dinner</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="price">Price:</label>
-                        <input type="number" step="0.01" id="price" name="price" class="form-control" required>
+                        <input type="number" step="0.01" id="price" name="price" value="{{ meal.price }}" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label for="inventory">Inventory:</label>
-                        <input type="number" id="inventory" name="inventory" class="form-control" required>
+                        <input type="number" id="inventory" name="inventory" value="{{ meal.inventory }}" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn">Add Meal</button>
+                    <button type="submit" class="btn">Save Changes</button>
                 </form>
                 <div style="margin-top: 20px;">
                     <a href="{{ url_for('meal_bp.view_meals') }}" class="btn">Back to Meals</a>

@@ -6,6 +6,7 @@ from routes.user_routes import user_bp
 from routes.meal_routes import meal_bp
 from routes.auth_routes import auth_bp
 from routes.complaint_routes import complaint_bp
+from routes.menu_routes import menu_bp
 
 app = Flask(__name__)
 app.secret_key = 'oogs'
@@ -15,7 +16,7 @@ app.register_blueprint(user_bp)
 app.register_blueprint(meal_bp)
 app.register_blueprint(auth_bp)
 app.register_blueprint(complaint_bp)
-
+app.register_blueprint(menu_bp)
 # Load user from session before each request
 @app.before_request
 def load_user():

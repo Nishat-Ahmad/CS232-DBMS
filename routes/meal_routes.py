@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from database.models import Meal, Session
 from utils.auth_decorators import login_required, admin_required
 
 meal_bp = Blueprint('meal_bp', __name__, url_prefix='/meals')
 
+# View all meals
 @meal_bp.route('/view')
 @login_required
 @admin_required
@@ -13,7 +14,10 @@ def view_meals():
     session.close()
     return render_template('view_meals.html', meals=meals)
 
+# Add a meal
 @meal_bp.route('/add', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def add_meal():
     if request.method == 'POST':
         name = request.form['name']
@@ -21,37 +25,63 @@ def add_meal():
         price = request.form['price']
         inventory = request.form['inventory']
 
+        if not name or not time or not price or not inventory:
+            flash("Please fill in all fields.", 'error')
+            return redirect(url_for('meal_bp.add_meal'))
+
+        # Check if time is valid (extra validation if needed)
+        if time not in ['breakfast', 'lunch', 'dinner']:
+            flash("Invalid meal time.", 'error')
+            return redirect(url_for('meal_bp.add_meal'))
+
         session = Session()
         new_meal = Meal(name=name, time=time, price=price, inventory=inventory)
         session.add(new_meal)
         session.commit()
         session.close()
+        flash('Meal added successfully!', 'success')
         return redirect(url_for('meal_bp.view_meals'))
 
     return render_template('add_meal.html')
 
+# Edit meal
 @meal_bp.route('/edit/<int:meal_id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
 def edit_meal(meal_id):
     session = Session()
     meal = session.query(Meal).get(meal_id)
+
+    if not meal:
+        flash("Meal not found.", 'error')
+        return redirect(url_for('meal_bp.view_meals'))
 
     if request.method == 'POST':
         meal.name = request.form['name']
         meal.time = request.form['time']
         meal.price = request.form['price']
         meal.inventory = request.form['inventory']
+
         session.commit()
         session.close()
+        flash('Meal updated successfully!', 'success')
         return redirect(url_for('meal_bp.view_meals'))
 
     session.close()
     return render_template('edit_meal.html', meal=meal)
 
+# Delete meal
 @meal_bp.route('/delete/<int:meal_id>')
+@login_required
+@admin_required
 def delete_meal(meal_id):
     session = Session()
     meal = session.query(Meal).get(meal_id)
-    session.delete(meal)
-    session.commit()
+    if meal:
+        session.delete(meal)
+        session.commit()
+        flash('Meal deleted successfully.', 'success')
+    else:
+        flash('Meal not found.', 'error')
     session.close()
     return redirect(url_for('meal_bp.view_meals'))

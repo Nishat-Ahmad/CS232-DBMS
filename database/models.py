@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text
+from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 import os
@@ -81,21 +81,34 @@ class Notification(Base):
     id = Column(Integer, primary_key=True)
     message = Column(Text, nullable=False)
     target_role = Column(Enum('admin', 'student', 'all', name='notification_targets'), nullable=False)
-
-class MealScheduleTemplate(Base):
-    __tablename__ = 'meal_schedule_templates'
-    id = Column(Integer, primary_key=True)
-    weekday = Column(Enum('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', name='weekdays'))
-    meal_time = Column(Enum('breakfast', 'lunch', 'dinner', name='meal_times'))
-    meal_name = Column(String(255))
-
 class Menu(Base):
-    __tablename__ = 'menu'
+    __tablename__ = 'menus'
+
     id = Column(Integer, primary_key=True)
-    date = Column(Date, nullable=False)
-    meal_time = Column(Enum('breakfast', 'lunch', 'dinner', name='meal_times'))
-    meal_id = Column(Integer, ForeignKey('meals.id'))
-    meal = relationship('Meal')
+    name = Column(String, nullable=False)  # e.g., "Week 18 Plan" or "Current Week"
+    start_date = Column(Date, nullable=True)  # optional for templates
+    is_template = Column(Boolean, default=False)
+
+    days = relationship("MenuDay", back_populates="menu", cascade="all, delete-orphan")
+
+class MenuDay(Base):
+    __tablename__ = 'menu_days'
+
+    id = Column(Integer, primary_key=True)
+    menu_id = Column(Integer, ForeignKey('menus.id', ondelete="CASCADE"))
+    day_of_week = Column(Enum('monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday', name='weekdays'))
+
+    breakfast_id = Column(Integer, ForeignKey('meals.id'))
+    lunch_id = Column(Integer, ForeignKey('meals.id'))
+    dinner_id = Column(Integer, ForeignKey('meals.id'))
+
+    menu = relationship("Menu", back_populates="days")
+    breakfast = relationship("Meal", foreign_keys=[breakfast_id])
+    lunch = relationship("Meal", foreign_keys=[lunch_id])
+    dinner = relationship("Meal", foreign_keys=[dinner_id])
+
+
+
 
 class Billing(Base):
     __tablename__ = 'billing'
