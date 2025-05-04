@@ -20,6 +20,13 @@
     flex-direction: column;
     min-height: 100vh;
   }
+
+  .wrap-text {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 900px;
+  }
+
   
   /* Container */
   .container {

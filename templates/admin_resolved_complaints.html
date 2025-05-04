@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mess Management System</title>
+    <title>Resolved Complaints</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .wrap-text {
+            word-wrap: break-word;
+            max-width: 300px;
+            white-space: pre-wrap;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -13,19 +20,10 @@
                 <img src="{{ url_for('static', filename='images/giki-logo.png') }}" alt="Logo" class="company-logo">
                 <a class="logo" href="{{ url_for('index') }}">Mess Management System</a>
             </div>
-            <input type="checkbox" id="menu-toggle-checkbox" class="menu-toggle-checkbox">
-            <label for="menu-toggle-checkbox" class="menu-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </label>
             <ul class="nav-menu">
                 <li><a href="{{ url_for('index') }}">Home</a></li>
-                <li><a href="{{ url_for('meal_bp.view_meals') }}">Meals</a></li>
-                <li><a href="{{ url_for('user_bp.view_users') }}">Users</a></li>
-                <li><a href="{{ url_for('complaint_bp.create_complaint') }}">Complaints</a></li>
+                <li><a href="{{ url_for('admin_bp.view_resolved_complaints') }}">Resolved Complaints</a></li>
                 <li><a href="{{ url_for('admin_bp.view_complaints') }}">Check Complaints</a></li>
-                
                 {% if g.user %}
                     <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                 {% else %}
@@ -34,13 +32,34 @@
             </ul>
         </div>
     </nav>
-    
-    {% block content %}
-    {% endblock %}
-    
+
+    <div class="container">
+        <h1>Resolved Complaints</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Complaint ID</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complaint in complaints %}
+                    <tr>
+                        <td>{{ complaint.student.id }}</td>
+                        <td>{{ complaint.id }}</td>
+                        <td class="wrap-text">{{ complaint.message }}</td>
+                        <td>{{ complaint.status }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>        
+    </div>
+
     <footer>
         <div class="container">
-            <p>© 2025 Autism               Web Dev Department. All rights reserved.</p>
+            <p>© 2025 Autism Web Dev Department. All rights reserved.</p>
             <p>made by 2023073, 2023495, 2023574</p>
         </div>
     </footer>

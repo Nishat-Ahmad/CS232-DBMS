@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unresolved Complaints</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .wrap-text {
+            word-wrap: break-word;
+            max-width: 300px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo-container">
+                <img src="{{ url_for('static', filename='images/giki-logo.png') }}" alt="Logo" class="company-logo">
+                <a class="logo" href="{{ url_for('index') }}">Mess Management System</a>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('admin_bp.view_resolved_complaints') }}">Resolved Complaints</a></li>
+                <li><a href="{{ url_for('admin_bp.view_complaints') }}">Check Complaints</a></li>
+                {% if g.user %}
+                    <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('auth_bp.login') }}">Login</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Unresolved Complaints</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Complaint ID</th>
+                    <th>Message</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for complaint in complaints %}
+                    <tr>
+                        <td>{{ complaint.student.id }}</td>
+                        <td>{{ complaint.id }}</td>
+                        <td class="wrap-text">{{ complaint.message }}</td>
+                        <td>{{ complaint.status }}</td>
+                        <td>
+                            {% if complaint.status != 'resolved' %}
+                                <form action="{{ url_for('admin_bp.resolve_complaint', id=complaint.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit">Resolve</button>
+                                </form>
+                            {% else %}
+                                <span>Resolved</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>        
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Autism Web Dev Department. All rights reserved.</p>
+            <p>made by 2023073, 2023495, 2023574</p>
+        </div>
+    </footer>
+</body>
+</html>
