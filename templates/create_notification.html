@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Create Notification{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Create Notification</h2>
+    <form method="POST" action="{{ url_for('notification_bp.create_notification') }}">
+        <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" name="message" id="message" rows="4" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="target_role" class="form-label">Target Role</label>
+            <select class="form-select" name="target_role" id="target_role" required>
+                <option value="student">Student</option>
+                <option value="admin">Admin</option>
+                <option value="all">All</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Notification</button>
+    </form>
+</div>
+{% endblock %}

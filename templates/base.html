@@ -24,10 +24,16 @@
                 <li><a href="{{ url_for('meal_bp.view_meals') }}">Meals</a></li>
                 <li><a href="{{ url_for('menu_bp.view_menus') }}">Menus</a></li>
                 <li><a href="{{ url_for('user_bp.view_users') }}">Users</a></li>
-                <li><a href="{{ url_for('complaint_bp.create_complaint') }}">Complaints</a></li>
-                <li><a href="{{ url_for('complaint_bp.view_complaints') }}">Check Complaints</a></li>
 
-                
+                {% if g.user and g.user.role == 'student' %}
+                    <li><a href="{{ url_for('complaint_bp.create_complaint') }}">Complaints</a></li>
+                    <li><a href="{{ url_for('notification_bp.view_student_notifications') }}">My Notifications</a></li>
+                {% elif g.user and g.user.role == 'admin' %}
+                    <li><a href="{{ url_for('complaint_bp.view_complaints') }}">Check Complaints</a></li>
+                    <li><a href="{{ url_for('notification_bp.create_notification') }}">New Notification</a></li>
+                    <li><a href="{{ url_for('notification_bp.view_all_notifications') }}">All Notifications</a></li>
+                {% endif %}
+
                 {% if g.user %}
                     <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
                 {% else %}
@@ -36,13 +42,13 @@
             </ul>
         </div>
     </nav>
-    
+
     {% block content %}
     {% endblock %}
-    
+
     <footer>
         <div class="container">
-            <p>© 2025 Autism               Web Dev Department. All rights reserved.</p>
+            <p>© 2025 Autism Web Dev Department. All rights reserved.</p>
             <p>made by 2023073, 2023495, 2023574</p>
         </div>
     </footer>

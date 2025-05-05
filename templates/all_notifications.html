@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}All Notifications{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>All Notifications</h2>
+    {% if notifications %}
+        <ul class="list-group">
+            {% for n in notifications %}
+                <li class="list-group-item">
+                    <strong>To:</strong> {{ n.target_role.capitalize() }} |
+                    <strong>By:</strong> 
+                    {{ n.admin.name if n.admin else 'Unknown' }} (ID: {{ n.admin.id if n.admin else 'N/A' }})<br>
+                    <p class="mb-0">{{ n.message }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No notifications available.</p>
+    {% endif %}
+</div>
+{% endblock %}

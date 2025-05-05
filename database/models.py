@@ -75,6 +75,19 @@ class Notification(Base):
     id = Column(Integer, primary_key=True)
     message = Column(Text, nullable=False)
     target_role = Column(Enum('admin', 'student', 'all', name='notification_targets'), nullable=False)
+    
+    admin_id = Column(Integer, ForeignKey('admins.id', ondelete='SET NULL'), nullable=True)  # new field
+    admin = relationship('Admin', backref='notifications')  # relationship
+
+class NotificationRead(Base):
+    __tablename__ = 'notification_reads'
+    id = Column(Integer, primary_key=True)
+    notification_id = Column(Integer, ForeignKey('notifications.id', ondelete='CASCADE'))
+    student_id = Column(Integer, ForeignKey('students.id', ondelete='CASCADE'))
+
+    notification = relationship('Notification', backref='reads')
+    student = relationship('Student', backref='read_notifications')
+
 class Menu(Base):
     __tablename__ = 'menus'
 
