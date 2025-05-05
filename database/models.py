@@ -61,12 +61,6 @@ class Attendance(Base):
     user = relationship('User', backref='attendances')
     meal = relationship('Meal', backref='attendances')
 
-class Inventory(Base):
-    __tablename__ = 'inventory'
-    id = Column(Integer, primary_key=True)
-    item_name = Column(String(255), nullable=False)
-    quantity = Column(Integer, nullable=False)
-
 class Complaint(Base):
     __tablename__ = 'complaints'
     id = Column(Integer, primary_key=True)
