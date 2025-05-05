@@ -7,6 +7,7 @@ menu_bp = Blueprint('menu_bp', __name__)
 
 # View all menus
 @menu_bp.route('/menus')
+@login_required
 def view_menus():
     session = Session()
     menus = session.query(Menu).all()
@@ -17,6 +18,7 @@ def view_menus():
 from datetime import datetime
 
 @menu_bp.route('/add', methods=['GET', 'POST'])
+@login_required
 @admin_required  # Assuming only admins can add menus
 def add_menu():
     if request.method == 'POST':
@@ -64,6 +66,7 @@ def add_menu():
 
 
 @menu_bp.route('/menus/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 @admin_required
 def edit_menu(id):
     session = Session()
