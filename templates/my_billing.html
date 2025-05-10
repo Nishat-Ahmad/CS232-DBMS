@@ -23,10 +23,12 @@
                         <td>{{ bill.amount }}</td>
                         <td>{{ bill.status|capitalize }}</td>
                         <td>
-                            {% if bill.status == 'unpaid' %}
+                            {% if bill.status == 'unpaid' and bill.payable %}
                                 <form method="POST" action="{{ url_for('billing_bp.pay_bill', bill_id=bill.id) }}" style="display:inline;">
                                     <button type="submit" class="btn">Pay</button>
                                 </form>
+                            {% elif bill.status == 'unpaid' and not bill.payable %}
+                                <span style="color: gray;">Payable after month ends</span>
                             {% elif bill.status == 'pending' %}
                                 <span style="color: orange;">Pending Approval</span>
                             {% elif bill.status == 'paid' %}

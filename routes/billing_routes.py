@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g
 from database.models import Session, Billing
 from utils.auth_decorators import login_required, admin_required
+from datetime import datetime, timedelta
 
 billing_bp = Blueprint('billing_bp', __name__, url_prefix='/billing')
 
@@ -9,6 +10,19 @@ billing_bp = Blueprint('billing_bp', __name__, url_prefix='/billing')
 def my_billing():
     db = Session()
     bills = db.query(Billing).filter_by(student_id=g.user.id).all()
+    # Determine if each bill is payable (only after the month is over)
+    today = datetime.today()
+    for bill in bills:
+        bill.payable = False
+        try:
+            bill_month = datetime.strptime(bill.month + ' ' + str(bill.year), '%B %Y')
+        except Exception:
+            continue
+        # Bill is payable if today is after the last day of the bill's month
+        if today > bill_month.replace(day=28) + timedelta(days=4):  # safely get to next month
+            next_month = (bill_month.replace(day=28) + timedelta(days=4)).replace(day=1)
+            if today >= next_month:
+                bill.payable = True
     db.close()
     return render_template('my_billing.html', bills=bills)
 
@@ -17,10 +31,24 @@ def my_billing():
 def pay_bill(bill_id):
     db = Session()
     bill = db.query(Billing).filter_by(id=bill_id, student_id=g.user.id).first()
-    if bill and bill.status == 'unpaid':
+    # Only allow payment if the bill is payable (month is over)
+    today = datetime.today()
+    try:
+        bill_month = datetime.strptime(bill.month + ' ' + str(bill.year), '%B %Y')
+    except Exception:
+        bill_month = None
+    can_pay = False
+    if bill_month:
+        if today > bill_month.replace(day=28) + timedelta(days=4):
+            next_month = (bill_month.replace(day=28) + timedelta(days=4)).replace(day=1)
+            if today >= next_month:
+                can_pay = True
+    if bill and bill.status == 'unpaid' and can_pay:
         bill.status = 'pending'
         db.commit()
         flash('Payment request submitted. Awaiting admin approval.', 'info')
+    elif not can_pay:
+        flash('You can only pay your bill after the month is over.', 'error')
     else:
         flash('Invalid bill or already paid/pending.', 'error')
     db.close()
