@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, g
-from database.models import Menu, MenuDay, Meal, Session
+from database.models import Menu, MenuDay, Meal, Session, DeletedMenu
 from datetime import datetime
 from utils.auth_decorators import login_required, admin_required
 
@@ -153,3 +153,27 @@ def my_menu():
     menu = db.query(Menu).options(joinedload(Menu.days).joinedload(MenuDay.breakfast), joinedload(Menu.days).joinedload(MenuDay.lunch), joinedload(Menu.days).joinedload(MenuDay.dinner)).order_by(Menu.start_date.desc()).first()
     db.close()
     return render_template('my_menu.html', menu=menu)
+
+@menu_bp.route('/deleted')
+@login_required
+@admin_required
+def view_deleted_menus():
+    session = Session()
+    deleted_menus = session.query(DeletedMenu).all()
+    session.close()
+    return render_template('deleted_menus.html', menus=deleted_menus)
+
+@menu_bp.route('/restore/<int:menu_id>', methods=['POST'])
+@login_required
+@admin_required
+def restore_menu(menu_id):
+    session = Session()
+    session.execute('''
+        INSERT INTO menus (id, name, start_date, is_template)
+        SELECT id, name, start_date, is_template FROM deleted_menus WHERE id = :menu_id;
+        DELETE FROM deleted_menus WHERE id = :menu_id;
+    ''', {'menu_id': menu_id})
+    session.commit()
+    session.close()
+    flash('Menu restored successfully!', 'success')
+    return redirect(url_for('menu_bp.view_deleted_menus'))

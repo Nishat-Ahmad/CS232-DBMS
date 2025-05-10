@@ -1,43 +1,40 @@
 {% extends "base.html" %}
-
 {% block content %}
 <section class="features">
     <div class="container">
-        <h2>All Meals</h2>
-        <div style="margin-bottom: 20px;">
-            <a href="{{ url_for('meal_bp.add_meal') }}" class="btn">Add New Meal</a>
-            <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
-            <a href="{{ url_for('meal_bp.view_deleted_meals') }}" class="btn">View Deleted Meals</a>
-        </div>
-        
+        <h2>Deleted Meals</h2>
         <div class="menu-table-container">
             <table class="menu-table">
                 <thead>
                     <tr>
-                        <th>Meal ID</th>
                         <th>Name</th>
                         <th>Time</th>
                         <th>Price</th>
                         <th>Inventory</th>
-                        <th>Actions</th>
+                        <th>Deleted At</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for meal in meals %}
                     <tr>
-                        <td>{{ meal.id }}</td>
                         <td>{{ meal.name }}</td>
                         <td>{{ meal.time }}</td>
                         <td>{{ meal.price }}</td>
                         <td>{{ meal.inventory }}</td>
+                        <td>{{ meal.deleted_at }}</td>
                         <td>
-                            <a href="{{ url_for('meal_bp.edit_meal', meal_id=meal.id) }}" class="btn" style="background-color: orange; color: white;">Edit</a>
-                            <a href="{{ url_for('meal_bp.delete_meal', meal_id=meal.id) }}" class="btn" style="background-color: #dc3545; color: white;">Delete</a>
+                            <form method="POST" action="{{ url_for('meal_bp.restore_meal', meal_id=meal.id) }}">
+                                <button type="submit" class="btn">Restore</button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('meal_bp.view_meals') }}" class="btn">Back to Meals</a>
         </div>
     </div>
 </section>

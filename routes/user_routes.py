@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
-from database.models import Session, User, Admin, Student
+from database.models import Session, User, Admin, Student, DeletedUser
 from utils.auth_decorators import login_required, admin_required
 
 user_bp = Blueprint('user_bp', __name__, url_prefix='/users')
@@ -81,3 +81,27 @@ def delete_user(user_id):
     db.close()
     flash('User deleted.', 'info')
     return redirect(url_for('user_bp.view_users'))
+
+@user_bp.route('/deleted')
+@login_required
+@admin_required
+def view_deleted_users():
+    session = Session()
+    deleted_users = session.query(DeletedUser).all()
+    session.close()
+    return render_template('deleted_users.html', users=deleted_users)
+
+@user_bp.route('/restore/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def restore_user(user_id):
+    session = Session()
+    session.execute('''
+        INSERT INTO users (id, name, email, password, role, type)
+        SELECT id, name, email, password, role, type FROM deleted_users WHERE id = :user_id;
+        DELETE FROM deleted_users WHERE id = :user_id;
+    ''', {'user_id': user_id})
+    session.commit()
+    session.close()
+    flash('User restored successfully!', 'success')
+    return redirect(url_for('user_bp.view_deleted_users'))

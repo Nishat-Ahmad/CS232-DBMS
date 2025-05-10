@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
-from database.models import Meal, Session
+from database.models import Meal, DeletedMeal, Session
 from utils.auth_decorators import login_required, admin_required
+from sqlalchemy import text
 
 meal_bp = Blueprint('meal_bp', __name__, url_prefix='/meals')
 
@@ -85,3 +86,29 @@ def delete_meal(meal_id):
         flash('Meal not found.', 'error')
     session.close()
     return redirect(url_for('meal_bp.view_meals'))
+
+# View deleted meals
+@meal_bp.route('/deleted')
+@login_required
+@admin_required
+def view_deleted_meals():
+    session = Session()
+    deleted_meals = session.query(DeletedMeal).all()
+    session.close()
+    return render_template('deleted_meals.html', meals=deleted_meals)
+
+# Restore meal
+@meal_bp.route('/restore/<int:meal_id>', methods=['POST'])
+@login_required
+@admin_required
+def restore_meal(meal_id):
+    session = Session()
+    session.execute(text('''
+        INSERT INTO meals (id, name, time, price, inventory)
+        SELECT id, name, time, price, inventory FROM deleted_meals WHERE id = :meal_id;
+        DELETE FROM deleted_meals WHERE id = :meal_id;
+    '''), {'meal_id': meal_id})
+    session.commit()
+    session.close()
+    flash('Meal restored successfully!', 'success')
+    return redirect(url_for('meal_bp.view_deleted_meals'))

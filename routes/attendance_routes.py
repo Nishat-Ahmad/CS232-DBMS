@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g
-from database.models import Session, Attendance, User, Meal, Billing
+from database.models import Session, Attendance, User, Meal, Billing, DeletedAttendance
 from utils.auth_decorators import login_required, admin_required
 from datetime import datetime
 from sqlalchemy.orm import joinedload
@@ -87,6 +87,32 @@ def delete_attendance(attendance_id):
         flash('Attendance record not found.', 'error')
     db.close()
     return redirect(url_for('attendance_bp.view_attendance'))
+
+# Admin: View deleted attendance records
+@attendance_bp.route('/deleted')
+@login_required
+@admin_required
+def view_deleted_attendance():
+    session = Session()
+    deleted_attendance = session.query(DeletedAttendance).all()
+    session.close()
+    return render_template('deleted_attendance.html', records=deleted_attendance)
+
+# Admin: Restore deleted attendance record
+@attendance_bp.route('/restore/<int:attendance_id>', methods=['POST'])
+@login_required
+@admin_required
+def restore_attendance(attendance_id):
+    session = Session()
+    session.execute('''
+        INSERT INTO attendance (id, user_id, meal_id, date, status)
+        SELECT id, user_id, meal_id, date, status FROM deleted_attendance WHERE id = :attendance_id;
+        DELETE FROM deleted_attendance WHERE id = :attendance_id;
+    ''', {'attendance_id': attendance_id})
+    session.commit()
+    session.close()
+    flash('Attendance record restored successfully!', 'success')
+    return redirect(url_for('attendance_bp.view_deleted_attendance'))
 
 # Student: View own attendance
 @attendance_bp.route('/my')

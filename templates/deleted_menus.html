@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Deleted Menus</h2>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Start Date</th>
+                        <th>Is Template</th>
+                        <th>Deleted At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for menu in menus %}
+                    <tr>
+                        <td>{{ menu.name }}</td>
+                        <td>{{ menu.start_date }}</td>
+                        <td>{{ menu.is_template }}</td>
+                        <td>{{ menu.deleted_at }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('menu_bp.restore_menu', menu_id=menu.id) }}">
+                                <button type="submit" class="btn">Restore</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('menu_bp.view_menus') }}" class="btn">Back to Menus</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

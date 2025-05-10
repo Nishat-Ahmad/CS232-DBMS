@@ -41,5 +41,11 @@ def load_user():
 def index():
     return render_template('index.html')
 
+@app.route('/admin/deleted-records')
+def admin_deleted_records():
+    if not g.user or g.user.role != 'admin':
+        return render_template('unauthorized.html'), 403
+    return render_template('admin_deleted_records.html')
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Deleted Records (Admin Only)</h2>
+        <ul>
+            <li><a href="{{ url_for('menu_bp.view_deleted_menus') }}">Deleted Menus</a></li>
+            <li><a href="{{ url_for('meal_bp.view_deleted_meals') }}">Deleted Meals</a></li>
+            <li><a href="{{ url_for('user_bp.view_deleted_users') }}">Deleted Users</a></li>
+            <li><a href="{{ url_for('attendance_bp.view_deleted_attendance') }}">Deleted Attendance</a></li>
+        </ul>
+    </div>
+</section>
+{% endblock %}

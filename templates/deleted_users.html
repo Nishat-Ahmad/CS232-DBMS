@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Deleted Users</h2>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Type</th>
+                        <th>Deleted At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.role }}</td>
+                        <td>{{ user.type }}</td>
+                        <td>{{ user.deleted_at }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('user_bp.restore_user', user_id=user.id) }}">
+                                <button type="submit" class="btn">Restore</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('user_bp.view_users') }}" class="btn">Back to Users</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

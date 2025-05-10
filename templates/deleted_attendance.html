@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Deleted Attendance Records</h2>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Meal ID</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Deleted At</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.user_id }}</td>
+                        <td>{{ record.meal_id }}</td>
+                        <td>{{ record.date }}</td>
+                        <td>{{ record.status }}</td>
+                        <td>{{ record.deleted_at }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('attendance_bp.restore_attendance', attendance_id=record.id) }}">
+                                <button type="submit" class="btn">Restore</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('attendance_bp.view_attendance') }}" class="btn">Back to Attendance</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
