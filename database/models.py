@@ -161,7 +161,6 @@ class DeletedAttendance(Base):
     status = Column(Enum('present', 'absent', name='attendance_status'))
     deleted_at = Column(Date, default=func.now())
 
-# Example: Reflect a view for student monthly billing
 class StudentMonthlyBilling(Base):
     __table__ = Table(
         'student_monthly_billing', Base.metadata,
@@ -230,6 +229,15 @@ with engine.connect() as conn:
     $$ LANGUAGE plpgsql;
     DROP TRIGGER IF EXISTS trigger_archive_attendance ON attendance;
     CREATE TRIGGER trigger_archive_attendance BEFORE DELETE ON attendance FOR EACH ROW EXECUTE FUNCTION archive_attendance_before_delete();
+    
+    -- DO $$
+    -- BEGIN
+    --     IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'billing_status') THEN
+    --         CREATE TYPE billing_status AS ENUM ('paid', 'unpaid', 'pending');
+    --     END IF;
+    -- END$$;
+
+    -- ALTER TABLE billing ADD COLUMN status billing_status DEFAULT 'unpaid' NOT NULL;
     '''))
 
 Base.metadata.create_all(engine)
