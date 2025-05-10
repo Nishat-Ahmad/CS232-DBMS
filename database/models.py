@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text, Boolean, func, select
+from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text, Boolean, func, select, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 import os
@@ -125,4 +125,85 @@ class Billing(Base):
 
     student = relationship('Student', backref='bills')
 
+class DeletedMeal(Base):
+    __tablename__ = 'deleted_meals'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    time = Column(Enum('breakfast', 'lunch', 'dinner', name='meal_times'), nullable=False)
+    price = Column(Numeric(10,2), nullable=False)
+    inventory = Column(Integer, nullable=False)
+    deleted_at = Column(Date, default=func.now())
+
+class DeletedMenu(Base):
+    __tablename__ = 'deleted_menus'
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    start_date = Column(Date, nullable=True)
+    is_template = Column(Boolean, default=False)
+    deleted_at = Column(Date, default=func.now())
+
+class DeletedUser(Base):
+    __tablename__ = 'deleted_users'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=False)
+    email = Column(String(255), unique=True, nullable=False)
+    password = Column(String(255), nullable=False)
+    role = Column(Enum('admin', 'student', name='user_roles'), nullable=False)
+    type = Column(String(50))
+    deleted_at = Column(Date, default=func.now())
+
+class DeletedAttendance(Base):
+    __tablename__ = 'deleted_attendance'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer)
+    meal_id = Column(Integer)
+    date = Column(Date, nullable=False)
+    status = Column(Enum('present', 'absent', name='attendance_status'))
+    deleted_at = Column(Date, default=func.now())
+
 Base.metadata.create_all(engine)
+
+# Create triggers, functions, and procedures for archiving on delete
+with engine.connect() as conn:
+    conn.execute(text('''
+    CREATE OR REPLACE FUNCTION archive_meal_before_delete() RETURNS TRIGGER AS $$
+    BEGIN
+        INSERT INTO deleted_meals SELECT OLD.*, now();
+        RETURN OLD;
+    END;
+    $$ LANGUAGE plpgsql;
+    DROP TRIGGER IF EXISTS trigger_archive_meal ON meals;
+    CREATE TRIGGER trigger_archive_meal BEFORE DELETE ON meals FOR EACH ROW EXECUTE FUNCTION archive_meal_before_delete();
+
+    CREATE OR REPLACE FUNCTION archive_menu_before_delete() RETURNS TRIGGER AS $$
+    BEGIN
+        INSERT INTO deleted_menus SELECT OLD.*, now();
+        RETURN OLD;
+    END;
+    $$ LANGUAGE plpgsql;
+    DROP TRIGGER IF EXISTS trigger_archive_menu ON menus;
+    CREATE TRIGGER trigger_archive_menu BEFORE DELETE ON menus FOR EACH ROW EXECUTE FUNCTION archive_menu_before_delete();
+
+    CREATE OR REPLACE PROCEDURE archive_user_proc() LANGUAGE plpgsql AS $$
+    BEGIN
+        INSERT INTO deleted_users SELECT *, now() FROM users WHERE id = (SELECT id FROM users ORDER BY id DESC LIMIT 1);
+    END;
+    $$;
+    CREATE OR REPLACE FUNCTION archive_user_before_delete() RETURNS TRIGGER AS $$
+    BEGIN
+        CALL archive_user_proc();
+        RETURN OLD;
+    END;
+    $$ LANGUAGE plpgsql;
+    DROP TRIGGER IF EXISTS trigger_archive_user ON users;
+    CREATE TRIGGER trigger_archive_user BEFORE DELETE ON users FOR EACH ROW EXECUTE FUNCTION archive_user_before_delete();
+
+    CREATE OR REPLACE FUNCTION archive_attendance_before_delete() RETURNS TRIGGER AS $$
+    BEGIN
+        INSERT INTO deleted_attendance SELECT OLD.*, now();
+        RETURN OLD;
+    END;
+    $$ LANGUAGE plpgsql;
+    DROP TRIGGER IF EXISTS trigger_archive_attendance ON attendance;
+    CREATE TRIGGER trigger_archive_attendance BEFORE DELETE ON attendance FOR EACH ROW EXECUTE FUNCTION archive_attendance_before_delete();
+    '''))

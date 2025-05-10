@@ -149,7 +149,7 @@ def delete_menu(id):
 @login_required
 def my_menu():
     db = Session()
-    # Example: get the latest menu (customize as needed)
-    menu = db.query(Menu).order_by(Menu.start_date.desc()).first()
+    from sqlalchemy.orm import joinedload
+    menu = db.query(Menu).options(joinedload(Menu.days).joinedload(MenuDay.breakfast), joinedload(Menu.days).joinedload(MenuDay.lunch), joinedload(Menu.days).joinedload(MenuDay.dinner)).order_by(Menu.start_date.desc()).first()
     db.close()
     return render_template('my_menu.html', menu=menu)

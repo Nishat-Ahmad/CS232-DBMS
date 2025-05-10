@@ -57,6 +57,7 @@
                     {% if g.user and g.user.role == 'student' %}
                         <li><a href="{{ url_for('attendance_bp.my_attendance') }}">My Attendance</a></li>
                         <li><a href="{{ url_for('billing_bp.my_billing') }}">My Billing</a></li>
+                        <li><a href="{{ url_for('menu_bp.my_menu') }}">Current Menu</a></li>
                         <li><a href="{{ url_for('complaint_bp.create_complaint') }}">Complaint</a></li>
                         <li><a href="{{ url_for('notification_bp.view_student_notifications') }}">Notifications</a></li>
                     {% elif g.user and g.user.role == 'admin' %}
