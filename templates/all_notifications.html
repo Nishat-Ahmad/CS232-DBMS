@@ -1,5 +1,12 @@
 {% extends "base.html" %}
-{% block title %}All Notifications{% endblock %}
+{% block title %}Create Notification{% endblock %}
+
+{% block nav_items %}
+    <li><a href="{{ url_for('index') }}">Home</a></li>
+    <li><a href="{{ url_for('notification_bp.create_notification') }}">New Notification</a></li>
+    <li><a href="{{ url_for('notification_bp.view_all_notifications') }}">All Notifications</a></li>
+    <li><a href="{{ url_for('auth_bp.logout') }}">Logout</a></li>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
