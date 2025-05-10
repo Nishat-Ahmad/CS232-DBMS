@@ -2,28 +2,49 @@
 {% block title %}Your Notifications{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Your Notifications</h2>
-    {% if notifications %}
-        <ul class="list-group">
-            {% for n in notifications %}
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div>
-                        <p class="mb-1">{{ n.message }}</p>
-                        <small class="text-muted">To: {{ n.target_role }}</small>
-                    </div>
-                    {% if n.id not in read_ids %}
-                        <form method="POST" action="{{ url_for('notification_bp.mark_as_read', notification_id=n.id) }}">
-                            <button class="btn btn-sm btn-outline-success">Mark as Read</button>
-                        </form>
-                    {% else %}
-                        <span class="badge bg-success">Read</span>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No notifications for you yet.</p>
-    {% endif %}
-</div>
+<section class="features">
+    <div class="container">
+        <h2>Your Notifications</h2>
+        {% if notifications %}
+            <div class="menu-table-container">
+                <table class="menu-table">
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                            <th>Target</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for n in notifications %}
+                        <tr>
+                            <td>{{ n.message }}</td>
+                            <td>{{ n.target_role|capitalize }}</td>
+                            <td>
+                                {% if n.id in read_ids %}
+                                    <span class="badge bg-success">Read</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Unread</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if n.id not in read_ids %}
+                                    <form method="POST" action="{{ url_for('notification_bp.mark_as_read', notification_id=n.id) }}" style="display:inline;">
+                                        <button class="btn btn-sm btn-outline-success">Mark as Read</button>
+                                    </form>
+                                {% else %}
+                                    <span style="color: #28a745;">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No notifications for you yet.</p>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}

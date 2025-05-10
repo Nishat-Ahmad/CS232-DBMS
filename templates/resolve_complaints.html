@@ -13,44 +13,47 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h1>Unresolved Complaints</h1>
-    <style>
-        .wrap-text {
-            word-wrap: break-word;
-            max-width: 300px;
-            white-space: pre-wrap;
-        }
-    </style>
-    <table>
-        <thead>
-            <tr>
-                <th>Student ID</th>
-                <th>Complaint ID</th>
-                <th>Message</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for complaint in complaints %}
-                <tr>
-                    <td>{{ complaint.student.id }}</td>
-                    <td>{{ complaint.id }}</td>
-                    <td class="wrap-text">{{ complaint.message }}</td>
-                    <td>{{ complaint.status }}</td>
-                    <td>
-                        {% if complaint.status != 'resolved' %}
-                            <form action="{{ url_for('complaint_bp.resolve_complaint', id=complaint.id) }}" method="POST" style="display:inline;">
-                                <button type="submit">Resolve</button>
-                            </form>
-                        {% else %}
-                            <span>Resolved</span>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<section class="features">
+    <div class="container">
+        <h2>Unresolved Complaints</h2>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Complaint ID</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for complaint in complaints %}
+                    <tr>
+                        <td>{{ complaint.student.name }}</td>
+                        <td>{{ complaint.id }}</td>
+                        <td style="max-width: 300px; white-space: pre-wrap; word-break: break-word;">{{ complaint.message }}</td>
+                        <td>
+                            {% if complaint.status == 'resolved' %}
+                                <span style="color: green;">Resolved</span>
+                            {% else %}
+                                <span style="color: orange;">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if complaint.status != 'resolved' %}
+                                <form action="{{ url_for('complaint_bp.resolve_complaint', id=complaint.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn">Resolve</button>
+                                </form>
+                            {% else %}
+                                <span>—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 {% endblock %}

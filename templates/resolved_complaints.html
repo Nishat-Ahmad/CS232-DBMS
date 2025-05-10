@@ -14,27 +14,34 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Resolved Complaints</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Student ID</th>
-                <th>Complaint ID</th>
-                <th>Message</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for complaint in complaints %}
-                <tr>
-                    <td>{{ complaint.student.id }}</td>
-                    <td>{{ complaint.id }}</td>
-                    <td class="wrap-text">{{ complaint.message }}</td>
-                    <td>{{ complaint.status }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>        
-</div>
+<section class="features">
+    <div class="container">
+        <h2>Resolved Complaints</h2>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                        <th>Resolved On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for complaint in complaints %}
+                    <tr>
+                        <td>{{ complaint.student.name }}</td>
+                        <td>{{ complaint.message }}</td>
+                        <td><span style="color: green;">Resolved</span></td>
+                        <td>{{ complaint.resolved_on.strftime('%Y-%m-%d') if complaint.resolved_on else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('complaint_bp.view_complaints') }}" class="btn">Back to Complaints</a>
+        </div>
+    </div>
+</section>
 {% endblock %}

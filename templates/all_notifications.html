@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Create Notification{% endblock %}
+{% block title %}All Notifications{% endblock %}
 
 {% block nav_items %}
     <li><a href="{{ url_for('index') }}">Home</a></li>
@@ -9,21 +9,33 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>All Notifications</h2>
-    {% if notifications %}
-        <ul class="list-group">
-            {% for n in notifications %}
-                <li class="list-group-item">
-                    <strong>To:</strong> {{ n.target_role.capitalize() }} |
-                    <strong>By:</strong> 
-                    {{ n.admin.name if n.admin else 'Unknown' }} (ID: {{ n.admin.id if n.admin else 'N/A' }})<br>
-                    <p class="mb-0">{{ n.message }}</p>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No notifications available.</p>
-    {% endif %}
-</div>
+<section class="features">
+    <div class="container">
+        <h2>All Notifications</h2>
+        {% if notifications %}
+            <div class="menu-table-container">
+                <table class="menu-table">
+                    <thead>
+                        <tr>
+                            <th>Message</th>
+                            <th>Target</th>
+                            <th>Created By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for n in notifications %}
+                        <tr>
+                            <td>{{ n.message }}</td>
+                            <td>{{ n.target_role|capitalize }}</td>
+                            <td>{% if n.admin %}{{ n.admin.name }}{% else %}System{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p>No notifications found.</p>
+        {% endif %}
+    </div>
+</section>
 {% endblock %}
