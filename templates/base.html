@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mess Management System</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        // This tiny script handles the dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            
+            // Check for saved theme preference
+            if (localStorage.getItem('dark-theme') === 'true') {
+                html.classList.add('dark-theme');
+                themeToggle.checked = true;
+            }
+            
+            // Toggle theme when checkbox changes
+            themeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    html.classList.add('dark-theme');
+                    localStorage.setItem('dark-theme', 'true');
+                } else {
+                    html.classList.remove('dark-theme');
+                    localStorage.setItem('dark-theme', 'false');
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <nav class="navbar">
@@ -13,6 +37,13 @@
                 <img src="{{ url_for('static', filename='images/giki-logo.png') }}" alt="Logo" class="company-logo">
                 <a class="logo" href="{{ url_for('index') }}">Mess Management System</a>
             </div>
+            
+            <!-- Theme toggle switch positioned within the navbar -->
+            <div class="theme-switch-wrapper">
+                <input type="checkbox" id="theme-toggle" class="theme-switch">
+                <label for="theme-toggle" class="slider"></label>
+            </div>
+            
             <input type="checkbox" id="menu-toggle-checkbox" class="menu-toggle-checkbox">
             <label for="menu-toggle-checkbox" class="menu-toggle">
                 <span></span>
