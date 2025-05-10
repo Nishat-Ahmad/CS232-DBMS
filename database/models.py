@@ -1,6 +1,6 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text, Boolean, func, select, text
+from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text, Boolean, func, select, text, Table
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 import os
 from dotenv import load_dotenv
 
@@ -161,11 +161,35 @@ class DeletedAttendance(Base):
     status = Column(Enum('present', 'absent', name='attendance_status'))
     deleted_at = Column(Date, default=func.now())
 
-Base.metadata.create_all(engine)
+# Example: Reflect a view for student monthly billing
+class StudentMonthlyBilling(Base):
+    __table__ = Table(
+        'student_monthly_billing', Base.metadata,
+        Column('user_id', Integer, primary_key=True),
+        Column('user_name', String),
+        Column('month', Integer),
+        Column('year', Integer),
+        Column('total_amount', Numeric),
+        autoload_with=engine
+    )
 
 # Create triggers, functions, and procedures for archiving on delete
 with engine.connect() as conn:
     conn.execute(text('''
+    CREATE OR REPLACE VIEW student_monthly_billing AS
+    SELECT
+        u.id AS user_id,
+        u.name AS user_name,
+        EXTRACT(MONTH FROM a.date) AS month,
+        EXTRACT(YEAR FROM a.date) AS year,
+        SUM(m.price) AS total_amount
+    FROM attendance a
+    JOIN users u ON a.user_id = u.id
+    JOIN meals m ON a.meal_id = m.id
+    WHERE a.status = 'present'
+    GROUP BY u.id, u.name, EXTRACT(YEAR FROM a.date), EXTRACT(MONTH FROM a.date)
+    ORDER BY year DESC, month DESC;
+
     CREATE OR REPLACE FUNCTION archive_meal_before_delete() RETURNS TRIGGER AS $$
     BEGIN
         INSERT INTO deleted_meals SELECT OLD.*, now();
@@ -207,3 +231,5 @@ with engine.connect() as conn:
     DROP TRIGGER IF EXISTS trigger_archive_attendance ON attendance;
     CREATE TRIGGER trigger_archive_attendance BEFORE DELETE ON attendance FOR EACH ROW EXECUTE FUNCTION archive_attendance_before_delete();
     '''))
+
+Base.metadata.create_all(engine)

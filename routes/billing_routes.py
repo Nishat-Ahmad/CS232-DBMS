@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, g
-from database.models import Session, Billing
+from database.models import Session, Billing, StudentMonthlyBilling
 from utils.auth_decorators import login_required, admin_required
 from datetime import datetime, timedelta
 
@@ -95,3 +95,12 @@ def all_bills():
     bills = db.query(Billing).options(joinedload(Billing.student)).all()
     db.close()
     return render_template('all_bills.html', bills=bills)
+
+@billing_bp.route('/summary')
+@login_required
+@admin_required
+def billing_summary():
+    db = Session()
+    bills = db.query(StudentMonthlyBilling).all()
+    db.close()
+    return render_template('billing_summary.html', bills=bills)
