@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text, Boolean
+from sqlalchemy import create_engine, Column, Integer, String, Date, Numeric, ForeignKey, Enum, Text, Boolean, func, select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 import os
@@ -77,7 +77,7 @@ class Notification(Base):
     target_role = Column(Enum('admin', 'student', 'all', name='notification_targets'), nullable=False)
     
     admin_id = Column(Integer, ForeignKey('admins.id', ondelete='SET NULL'), nullable=True)  # new field
-    admin = relationship('Admin', backref='notifications')  # relationship
+    admin = relationship('Admin', backref='notifications')
 
 class NotificationRead(Base):
     __tablename__ = 'notification_reads'
@@ -114,9 +114,6 @@ class MenuDay(Base):
     lunch = relationship("Meal", foreign_keys=[lunch_id])
     dinner = relationship("Meal", foreign_keys=[dinner_id])
 
-
-
-
 class Billing(Base):
     __tablename__ = 'billing'
     id = Column(Integer, primary_key=True)
@@ -124,6 +121,7 @@ class Billing(Base):
     month = Column(String(20), nullable=False)
     year = Column(Integer, nullable=False)
     amount = Column(Numeric(10, 2), nullable=False)
+    status = Column(Enum('paid', 'unpaid', 'pending', name='billing_status'), default='unpaid', nullable=False)
 
     student = relationship('Student', backref='bills')
 

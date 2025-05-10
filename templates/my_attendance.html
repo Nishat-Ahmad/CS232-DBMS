@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>My Attendance</h2>
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('attendance_bp.mark_attendance') }}" class="btn">Mark Attendance</a>
+        </div>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Meal</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ record.meal.name }}</td>
+                        <td>{{ record.status }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

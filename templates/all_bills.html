@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>All Student Bills</h2>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bill in bills %}
+                    <tr>
+                        <td>{{ bill.student.name }}</td>
+                        <td>{{ bill.month }}</td>
+                        <td>{{ bill.year }}</td>
+                        <td>{{ bill.amount }}</td>
+                        <td>{{ bill.status|capitalize }}</td>
+                        <td>
+                            {% if bill.status == 'pending' %}
+                                <form method="POST" action="{{ url_for('billing_bp.approve_bill', bill_id=bill.id) }}" style="display:inline;">
+                                    <button type="submit" class="btn">Approve</button>
+                                </form>
+                            {% elif bill.status == 'paid' %}
+                                <span style="color: green;">Paid</span>
+                            {% elif bill.status == 'unpaid' %}
+                                <span style="color: red;">Unpaid</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, g
 from database.models import Menu, MenuDay, Meal, Session
 from datetime import datetime
 from utils.auth_decorators import login_required, admin_required
@@ -143,3 +143,13 @@ def delete_menu(id):
         flash(f'Error deleting menu: {str(e)}', 'error')
 
     return redirect(url_for('menu_bp.view_menus'))
+
+# Student: View current menu
+@menu_bp.route('/my')
+@login_required
+def my_menu():
+    db = Session()
+    # Example: get the latest menu (customize as needed)
+    menu = db.query(Menu).order_by(Menu.start_date.desc()).first()
+    db.close()
+    return render_template('my_menu.html', menu=menu)

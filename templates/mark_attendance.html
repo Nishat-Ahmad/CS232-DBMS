@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Mark Attendance</h2>
+        {% if not can_mark %}
+            <div class="alert alert-danger">You cannot mark attendance: your bill is unpaid or exceeds the allowed threshold.</div>
+        {% endif %}
+        <form method="POST">
+            <div class="form-group">
+                <label for="meal_id">Select Meal:</label>
+                <select id="meal_id" name="meal_id" class="form-control" required {% if not can_mark %}disabled{% endif %}>
+                    <option value="">-- Select --</option>
+                    {% for meal in meals %}
+                        <option value="{{ meal.id }}">{{ meal.name }} ({{ meal.time }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn" {% if not can_mark %}disabled{% endif %}>Mark Attendance</button>
+        </form>
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('attendance_bp.my_attendance') }}" class="btn">Back to My Attendance</a>
+        </div>
+        {% if bill %}
+            <div style="margin-top: 20px;">
+                <strong>Current Bill:</strong> {{ bill.amount }} (Status: {{ bill.status }})<br>
+                <strong>Threshold:</strong> {{ threshold }}
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

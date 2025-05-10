@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Attendance Records</h2>
+        <div style="margin-bottom: 20px;">
+            <a href="{{ url_for('attendance_bp.add_attendance') }}" class="btn">Add Attendance</a>
+            <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+        </div>
+        <div class="menu-table-container">
+            <table class="menu-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Meal</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.id }}</td>
+                        <td>{{ record.user.name }}</td>
+                        <td>{{ record.meal.name }}</td>
+                        <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ record.status }}</td>
+                        <td>
+                            <a href="{{ url_for('attendance_bp.edit_attendance', attendance_id=record.id) }}" class="btn" style="background-color: orange; color: white;">Edit</a>
+                            <a href="{{ url_for('attendance_bp.delete_attendance', attendance_id=record.id) }}" class="btn" style="background-color: #dc3545; color: white;">Delete</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
