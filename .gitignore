@@ -172,3 +172,4 @@ cython_debug/
 
 # Database config file
 db_config.ini
+config/*.ini
