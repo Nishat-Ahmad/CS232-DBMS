@@ -1,7 +1,5 @@
-import os
 import json
-import configparser
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, flash
 from database.models import Session, Base
 from sqlalchemy.inspection import inspect
 import firebase_admin

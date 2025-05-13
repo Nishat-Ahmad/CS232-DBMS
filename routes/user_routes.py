@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from database.models import Session, User, Admin, Student, DeletedUser
 from utils.auth_decorators import login_required, admin_required
 

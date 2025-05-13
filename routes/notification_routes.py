@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask import session as flask_session
-from database.models import Session, Notification, Admin, Student, NotificationRead
+from database.models import Session, Notification, NotificationRead
 from utils.auth_decorators import login_required, admin_required, student_required
 from sqlalchemy.orm import joinedload
 
