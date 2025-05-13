@@ -176,3 +176,5 @@ config/*.ini
 
 #api key
 cs234e0b-1a2f-4c3d-8f7b-5a9c6d1e0e2b.json
+/*.json
+*/cs233-project-448b1-firebase-adminsdk-fbsvc-b0509b8418.json
