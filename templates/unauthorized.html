@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container" style="margin-top: 40px;">
+    <h2>Unauthorized</h2>
+    <div class="alert alert-danger" role="alert">
+        You do not have permission to access this page.
+    </div>
+    <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+</div>
+{% endblock %}

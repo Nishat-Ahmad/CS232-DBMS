@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Database Backup (Admin Only)</h2>
+        <form method="post" action="{{ url_for('backup_bp.backup_to_firebase') }}">
+            <button type="submit" class="btn">Backup Database to Firebase</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

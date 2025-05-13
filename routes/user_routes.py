@@ -1,6 +1,11 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from database.models import Session, User, Admin, Student, DeletedUser
 from utils.auth_decorators import login_required, admin_required
+from sqlalchemy import text
+from sqlalchemy.exc import IntegrityError
+import logging
+
+logging.basicConfig(filename='db_errors.log', level=logging.ERROR)
 
 user_bp = Blueprint('user_bp', __name__, url_prefix='/users')
 
@@ -18,19 +23,18 @@ def view_users():
 @login_required
 @admin_required
 def add_user():
-    role = 'student'  # Default to 'student' if the user hasn't selected a role yet.
+    role = 'student' 
 
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        role = request.form['role']  # Get the role from the form
-        roll_number = request.form.get('roll_number')  # Only for students
-        admin_level = request.form.get('admin_level')  # Only for admins
+        role = request.form['role']  
+        roll_number = request.form.get('roll_number')  
+        admin_level = request.form.get('admin_level')  
 
         session = Session()
-
-        # Create the user object
+       
         if role == 'student':
             new_user = Student(name=name, email=email, password=(password), role=role, roll_number=roll_number)
         else:  # Admin
@@ -43,7 +47,7 @@ def add_user():
         flash(f'User {name} added successfully!', 'success')
         return redirect(url_for('user_bp.view_users'))
 
-    return render_template('add_user.html', role=role)  # Pass the role here
+    return render_template('add_user.html', role=role) 
 
 
 @user_bp.route('/edit/<int:user_id>', methods=['GET', 'POST'])
@@ -63,7 +67,6 @@ def edit_user(user_id):
         flash('User updated.', 'success')
         return redirect(url_for('user_bp.view_users'))
 
-    # 🛠️ Delay closing until after render_template
     response = render_template('edit_user.html', user=user)
     db.close()
     return response
@@ -96,12 +99,24 @@ def view_deleted_users():
 @admin_required
 def restore_user(user_id):
     session = Session()
-    session.execute('''
-        INSERT INTO users (id, name, email, password, role, type)
-        SELECT id, name, email, password, role, type FROM deleted_users WHERE id = :user_id;
-        DELETE FROM deleted_users WHERE id = :user_id;
-    ''', {'user_id': user_id})
-    session.commit()
-    session.close()
-    flash('User restored successfully!', 'success')
+    try:
+        session.execute(text('''
+            INSERT INTO users (id, name, email, password, role, type)
+            SELECT id, name, email, password, role, type FROM deleted_users WHERE id = :user_id;
+        '''), {'user_id': user_id})
+        session.execute(text('''
+            DELETE FROM deleted_users WHERE id = :user_id;
+        '''), {'user_id': user_id})
+        session.commit()
+        flash('User restored successfully!', 'success')
+    except IntegrityError as e:
+        session.rollback()
+        logging.error(f"IntegrityError in restore_user: {str(e)}")
+        flash('User could not be restored: user with this ID or email already exists.', 'danger')
+    except Exception as e:
+        session.rollback()
+        logging.error(f"Error in restore_user: {str(e)}")
+        flash('An error occurred while restoring the user.', 'danger')
+    finally:
+        session.close()
     return redirect(url_for('user_bp.view_deleted_users'))

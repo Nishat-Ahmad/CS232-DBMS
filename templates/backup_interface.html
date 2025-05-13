@@ -34,7 +34,7 @@
         <div class="card-body">
             <h2>Backup Entire Database</h2>
             <p>This will backup all tables to Firebase. This operation may take some time depending on the size of your database.</p>
-            <form action="{{ url_for('backup_bp.backup_all_tables') }}" method="post">
+            <form action="{{ url_for('backup_bp.backup_all_tables_route') }}" method="post">
                 <button type="submit" class="btn">Backup All Tables</button>
             </form>
         </div>
