@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container backup-container">
+    <h1>Database Backup to Firebase</h1>
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="card">
+        <div class="card-body">
+            <h2>Backup Single Table</h2>
+            <form action="{{ url_for('backup_bp.backup_single_table') }}" method="post">
+                <div class="form-group">
+                    <label for="table_name">Select Table to Backup:</label>
+                    <select name="table_name" id="table_name" class="form-control" required>
+                        <option value="">-- Select a table --</option>
+                        {% for table in tables %}
+                            <option value="{{ table }}">{{ table }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn">Backup Selected Table</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-body">
+            <h2>Backup Entire Database</h2>
+            <p>This will backup all tables to Firebase. This operation may take some time depending on the size of your database.</p>
+            <form action="{{ url_for('backup_bp.backup_all_tables') }}" method="post">
+                <button type="submit" class="btn">Backup All Tables</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <h3>Available Tables:</h3>
+        <ul class="list-group">
+            {% for table in tables %}
+                <li class="list-group-item">{{ table }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}
