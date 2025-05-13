@@ -18,19 +18,18 @@ def view_users():
 @login_required
 @admin_required
 def add_user():
-    role = 'student'  # Default to 'student' if the user hasn't selected a role yet.
+    role = 'student' 
 
     if request.method == 'POST':
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
-        role = request.form['role']  # Get the role from the form
-        roll_number = request.form.get('roll_number')  # Only for students
-        admin_level = request.form.get('admin_level')  # Only for admins
+        role = request.form['role']  
+        roll_number = request.form.get('roll_number')  
+        admin_level = request.form.get('admin_level')  
 
         session = Session()
-
-        # Create the user object
+       
         if role == 'student':
             new_user = Student(name=name, email=email, password=(password), role=role, roll_number=roll_number)
         else:  # Admin
@@ -43,7 +42,7 @@ def add_user():
         flash(f'User {name} added successfully!', 'success')
         return redirect(url_for('user_bp.view_users'))
 
-    return render_template('add_user.html', role=role)  # Pass the role here
+    return render_template('add_user.html', role=role) 
 
 
 @user_bp.route('/edit/<int:user_id>', methods=['GET', 'POST'])
@@ -63,7 +62,6 @@ def edit_user(user_id):
         flash('User updated.', 'success')
         return redirect(url_for('user_bp.view_users'))
 
-    # 🛠️ Delay closing until after render_template
     response = render_template('edit_user.html', user=user)
     db.close()
     return response

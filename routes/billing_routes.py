@@ -10,7 +10,6 @@ billing_bp = Blueprint('billing_bp', __name__, url_prefix='/billing')
 def my_billing():
     db = Session()
     bills = db.query(Billing).filter_by(student_id=g.user.id).all()
-    # Determine if each bill is payable (only after the month is over)
     today = datetime.today()
     for bill in bills:
         bill.payable = False
@@ -18,8 +17,7 @@ def my_billing():
             bill_month = datetime.strptime(bill.month + ' ' + str(bill.year), '%B %Y')
         except Exception:
             continue
-        # Bill is payable if today is after the last day of the bill's month
-        if today > bill_month.replace(day=28) + timedelta(days=4):  # safely get to next month
+        if today > bill_month.replace(day=28) + timedelta(days=4):
             next_month = (bill_month.replace(day=28) + timedelta(days=4)).replace(day=1)
             if today >= next_month:
                 bill.payable = True
@@ -31,7 +29,6 @@ def my_billing():
 def pay_bill(bill_id):
     db = Session()
     bill = db.query(Billing).filter_by(id=bill_id, student_id=g.user.id).first()
-    # Only allow payment if the bill is payable (month is over)
     today = datetime.today()
     try:
         bill_month = datetime.strptime(bill.month + ' ' + str(bill.year), '%B %Y')
@@ -58,7 +55,6 @@ def pay_bill(bill_id):
 @login_required
 @admin_required
 def pending_bills():
-    # Only allow admin to view
     if not g.user or g.user.role != 'admin':
         flash('Access denied.', 'error')
         return redirect(url_for('index'))
@@ -71,7 +67,6 @@ def pending_bills():
 @login_required
 @admin_required
 def approve_bill(bill_id):
-    # Only allow admin to approve
     if not g.user or g.user.role != 'admin':
         flash('Access denied.', 'error')
         return redirect(url_for('index'))

@@ -37,7 +37,6 @@ def add_attendance():
             attendance = Attendance(user_id=user_id, meal_id=meal_id, date=date, status=status)
             db.add(attendance)
             db.commit()
-            # Call billing and notification logic only if present
             if status == 'present':
                 update_billing_and_notify(db, user_id, datetime.strptime(date, '%Y-%m-%d'), meal_id)
             flash('Attendance recorded.', 'success')
@@ -131,7 +130,6 @@ def mark_attendance():
     meals = db.query(Meal).all()
     today = datetime.today().date()
     threshold = 10000
-    # Get current month/year bill
     month = today.strftime('%B')
     year = today.year
     bill = db.query(Billing).filter_by(student_id=g.user.id, month=month, year=year).first()
