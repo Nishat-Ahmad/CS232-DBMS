@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from database.models import Session, User, Admin, Student, DeletedUser
 from utils.auth_decorators import login_required, admin_required
+from sqlalchemy import text
 
 user_bp = Blueprint('user_bp', __name__, url_prefix='/users')
 
@@ -94,11 +95,41 @@ def view_deleted_users():
 @admin_required
 def restore_user(user_id):
     session = Session()
-    session.execute('''
+    # Check if user with same id already exists in users table
+    existing_user = session.query(User).filter_by(id=user_id).first()
+    if existing_user:
+        session.close()
+        flash('A user with this ID already exists. Cannot restore.', 'danger')
+        return redirect(url_for('user_bp.view_deleted_users'))
+
+    # Fetch deleted user row
+    deleted_user = session.query(DeletedUser).filter_by(id=user_id).first()
+    if not deleted_user:
+        session.close()
+        flash('Deleted user not found.', 'danger')
+        return redirect(url_for('user_bp.view_deleted_users'))
+
+    # Restore to users table
+    session.execute(text('''
         INSERT INTO users (id, name, email, password, role, type)
         SELECT id, name, email, password, role, type FROM deleted_users WHERE id = :user_id;
-        DELETE FROM deleted_users WHERE id = :user_id;
-    ''', {'user_id': user_id})
+    '''), {'user_id': user_id})
+
+    # Restore to subtable
+    if deleted_user.role == 'student':
+        session.execute(text('''
+            INSERT INTO students (id, roll_number)
+            SELECT id, :roll_number FROM deleted_users WHERE id = :user_id;
+        '''), {'user_id': user_id, 'roll_number': 'restored-roll'})
+    elif deleted_user.role == 'admin':
+        session.execute(text('''
+            INSERT INTO admins (id, admin_level)
+            SELECT id, :admin_level FROM deleted_users WHERE id = :user_id;
+        '''), {'user_id': user_id, 'admin_level': 'restored-admin'})
+
+    # Remove from deleted_users
+    session.execute(text('DELETE FROM deleted_users WHERE id = :user_id;'), {'user_id': user_id})
+
     session.commit()
     session.close()
     flash('User restored successfully!', 'success')

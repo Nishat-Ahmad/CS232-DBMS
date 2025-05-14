@@ -28,7 +28,10 @@ firebase_ref = firebase_db.reference(BACKUP_ROOT_NODE)
 def serialize_row(row):
     result = {}
     for c in inspect(row).mapper.column_attrs:
-        value = getattr(row, c.key)
+        try:
+            value = getattr(row, c.key)
+        except Exception:
+            value = None  # If deferred or failed to load, set as None
         if hasattr(value, 'isoformat'):
             result[c.key] = value.isoformat()
         else:

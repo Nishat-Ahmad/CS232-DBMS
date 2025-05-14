@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, g
 from database.models import Menu, MenuDay, Meal, Session, DeletedMenu
 from datetime import datetime
+from sqlalchemy import text
 from utils.auth_decorators import login_required, admin_required
 
 menu_bp = Blueprint('menu_bp', __name__)
@@ -161,11 +162,11 @@ def view_deleted_menus():
 @admin_required
 def restore_menu(menu_id):
     session = Session()
-    session.execute('''
+    session.execute(text('''
         INSERT INTO menus (id, name, start_date, is_template)
         SELECT id, name, start_date, is_template FROM deleted_menus WHERE id = :menu_id;
         DELETE FROM deleted_menus WHERE id = :menu_id;
-    ''', {'menu_id': menu_id})
+    '''), {'menu_id': menu_id})
     session.commit()
     session.close()
     flash('Menu restored successfully!', 'success')

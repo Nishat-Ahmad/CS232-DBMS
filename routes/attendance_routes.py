@@ -4,6 +4,7 @@ from utils.auth_decorators import login_required, admin_required
 from datetime import datetime
 from sqlalchemy.orm import joinedload
 from services.billing_service import update_billing_and_notify
+from sqlalchemy import text
 
 attendance_bp = Blueprint('attendance_bp', __name__, url_prefix='/attendance')
 
@@ -103,11 +104,11 @@ def view_deleted_attendance():
 @admin_required
 def restore_attendance(attendance_id):
     session = Session()
-    session.execute('''
+    session.execute(text('''
         INSERT INTO attendance (id, user_id, meal_id, date, status)
         SELECT id, user_id, meal_id, date, status FROM deleted_attendance WHERE id = :attendance_id;
         DELETE FROM deleted_attendance WHERE id = :attendance_id;
-    ''', {'attendance_id': attendance_id})
+    '''), {'attendance_id': attendance_id})
     session.commit()
     session.close()
     flash('Attendance record restored successfully!', 'success')
