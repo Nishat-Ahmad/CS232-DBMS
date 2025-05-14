@@ -19,28 +19,23 @@ from datetime import datetime
 
 @menu_bp.route('/add', methods=['GET', 'POST'])
 @login_required
-@admin_required  # Assuming only admins can add menus
+@admin_required 
 def add_menu():
     if request.method == 'POST':
-        # Get form data
         name = request.form['name']
         start_date_str = request.form['start_date']
         is_template = 'is_template' in request.form
 
-        # Convert start_date string to datetime
         start_date = datetime.strptime(start_date_str, '%Y-%m-%d') if start_date_str else datetime.today()
 
-        # Create new Menu
         new_menu = Menu(name=name, start_date=start_date, is_template=is_template)
 
-        # Add MenuDays for each day of the week (Monday to Sunday)
-        session = Session()  # Start a new session
+        session = Session() 
         for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']:
             breakfast_id = request.form[f'{day}_breakfast']
             lunch_id = request.form[f'{day}_lunch']
             dinner_id = request.form[f'{day}_dinner']
 
-            # Create a MenuDay for the current day of the week
             menu_day = MenuDay(
                 menu=new_menu,
                 day_of_week=day,
@@ -48,18 +43,18 @@ def add_menu():
                 lunch_id=lunch_id,
                 dinner_id=dinner_id
             )
-            session.add(menu_day)  # Add MenuDay to the session
+            session.add(menu_day) 
         
-        session.add(new_menu)  # Add Menu to the session
-        session.commit()  # Commit all changes
-        session.close()  # Close the session
+        session.add(new_menu)  
+        session.commit()  
+        session.close()  
         
         flash('Menu added successfully!', 'success')
-        return redirect(url_for('menu_bp.view_menus'))  # Redirect to menu view page
+        return redirect(url_for('menu_bp.view_menus'))  
 
     # GET request: Fetch all meals to display in the form
     session = Session()
-    meals = session.query(Meal).all()  # Query all meals available
+    meals = session.query(Meal).all()  
     session.close()
 
     return render_template('add_menu.html', meals=meals, datetime=datetime)
@@ -90,7 +85,7 @@ def edit_menu(id):
                 lunch_id = request.form[f'{day}_lunch']
                 dinner_id = request.form[f'{day}_dinner']
 
-                # Validate meal IDs exist
+              
                 breakfast = session.get(Meal, breakfast_id)
                 lunch = session.get(Meal, lunch_id)
                 dinner = session.get(Meal, dinner_id)
@@ -100,7 +95,7 @@ def edit_menu(id):
                     flash(f'Invalid meal selection for {day.capitalize()}.', 'error')
                     return redirect(url_for('menu_bp.edit_menu', id=id))
 
-                # Update MenuDay with new values
+                
                 menu_day.breakfast_id = breakfast_id
                 menu_day.lunch_id = lunch_id
                 menu_day.dinner_id = dinner_id
@@ -127,10 +122,8 @@ def delete_menu(id):
         return redirect(url_for('menu_bp.view_menus'))
 
     try:
-        # Delete the associated MenuDays first to avoid foreign key constraint errors
         session.query(MenuDay).filter_by(menu_id=id).delete()
 
-        # Now delete the Menu itself
         session.delete(menu)
 
         session.commit()
@@ -138,7 +131,7 @@ def delete_menu(id):
 
         flash('Menu deleted successfully!', 'success')
     except Exception as e:
-        session.rollback()  # Rollback in case of any error
+        session.rollback() 
         session.close()
         flash(f'Error deleting menu: {str(e)}', 'error')
 

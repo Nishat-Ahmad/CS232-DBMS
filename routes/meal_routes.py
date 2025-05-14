@@ -30,7 +30,6 @@ def add_meal():
             flash("Please fill in all fields.", 'error')
             return redirect(url_for('meal_bp.add_meal'))
 
-        # Check if time is valid (extra validation if needed)
         if time not in ['breakfast', 'lunch', 'dinner']:
             flash("Invalid meal time.", 'error')
             return redirect(url_for('meal_bp.add_meal'))

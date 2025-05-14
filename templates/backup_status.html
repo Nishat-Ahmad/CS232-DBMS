@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="features">
+    <div class="container">
+        <h2>Database Backup Status</h2>
+        {% if status == 'success' %}
+            <div class="alert alert-success">Database backup to Firebase was successful!</div>
+        {% else %}
+            <div class="alert alert-danger">Backup failed: {{ error }}</div>
+        {% endif %}
+        <a href="{{ url_for('index') }}" class="btn">Back to Home</a>
+    </div>
+</section>
+{% endblock %}

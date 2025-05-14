@@ -1,92 +1,84 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container">
-    <h1>Add New Menu</h1>
+<h1>Add New Menu</h1>
 
-    <div class="menu-form-container">
-        <form method="POST">
-            <!-- Menu Name and Start Date Row -->
-            <div class="form-row">
-                <div class="form-col-2">
-                    <div class="form-group">
-                        <label for="name">Menu Name</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-                </div>
-                <div class="form-col-2">
-                    <div class="form-group">
-                        <label for="start_date">Start Date</label>
-                        <input type="date" id="start_date" name="start_date" class="form-control" 
-                            value="{{ datetime.today().strftime('%Y-%m-%d') }}" required>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Is Template Checkbox -->
-            <div class="form-group form-check">
-                <input type="checkbox" id="is_template" name="is_template" class="form-check-input">
-                <label class="form-check-label" for="is_template">Save as Template</label>
-            </div>
-
-            <hr>
-
-            <!-- Menu Planner Table -->
-            <table class="menu-planner-table">
-                <thead>
-                    <tr>
-                        <th class="day-column">Day</th>
-                        <th class="meal-column">Breakfast</th>
-                        <th class="meal-column">Lunch</th>
-                        <th class="meal-column">Dinner</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] %}
-                    <tr>
-                        <td class="day-cell">{{ day.capitalize() }}</td>
-                        <td>
-                            <select id="{{ day }}_breakfast" name="{{ day }}_breakfast" class="form-control" required>
-                                <option value="">Select Breakfast</option>
-                                {% for meal in meals %}
-                                <option value="{{ meal.id }}">{{ meal.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td>
-                            <select id="{{ day }}_lunch" name="{{ day }}_lunch" class="form-control" required>
-                                <option value="">Select Lunch</option>
-                                {% for meal in meals %}
-                                <option value="{{ meal.id }}">{{ meal.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                        <td>
-                            <select id="{{ day }}_dinner" name="{{ day }}_dinner" class="form-control" required>
-                                <option value="">Select Dinner</option>
-                                {% for meal in meals %}
-                                <option value="{{ meal.id }}">{{ meal.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <!-- Submit Button -->
-            <div class="form-submit">
-                <button type="submit" class="btn">Add Menu</button>
-            </div>
-        </form>
-
-        {% if messages %}
-        <div class="alert alert-info mt-4">
-            {% for message in messages %}
-                <p>{{ message }}</p>
-            {% endfor %}
-        </div>
-        {% endif %}
+<form method="POST">
+    <!-- Menu Name -->
+    <div class="form-group">
+        <label for="name">Menu Name</label>
+        <input type="text" id="name" name="name" class="form-control" required>
     </div>
-</div>
+
+    <!-- Start Date -->
+    <!-- Start Date -->
+    <!-- Start Date -->
+    <div class="form-group">
+        <label for="start_date">Start Date</label>
+        <input type="date" id="start_date" name="start_date" class="form-control" value="{{ datetime.today().strftime('%Y-%m-%d') }}" required>
+    </div>
+
+
+
+    <!-- Is Template Checkbox -->
+    <div class="form-group form-check">
+        <input type="checkbox" id="is_template" name="is_template" class="form-check-input">
+        <label class="form-check-label" for="is_template">Is Template?</label>
+    </div>
+
+    <hr>
+
+    <!-- Days of the Week -->
+    {% for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] %}
+    <div class="form-group">
+        <label>{{ day.capitalize() }}:</label>
+
+        <!-- Breakfast -->
+        <div class="form-group">
+            <label for="{{ day }}_breakfast">Breakfast</label>
+            <select id="{{ day }}_breakfast" name="{{ day }}_breakfast" class="form-control" required>
+                <option value="">Select Breakfast</option>
+                {% for meal in meals %}
+                <option value="{{ meal.id }}">{{ meal.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Lunch -->
+        <div class="form-group">
+            <label for="{{ day }}_lunch">Lunch</label>
+            <select id="{{ day }}_lunch" name="{{ day }}_lunch" class="form-control" required>
+                <option value="">Select Lunch</option>
+                {% for meal in meals %}
+                <option value="{{ meal.id }}">{{ meal.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Dinner -->
+        <div class="form-group">
+            <label for="{{ day }}_dinner">Dinner</label>
+            <select id="{{ day }}_dinner" name="{{ day }}_dinner" class="form-control" required>
+                <option value="">Select Dinner</option>
+                {% for meal in meals %}
+                <option value="{{ meal.id }}">{{ meal.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <hr>
+    {% endfor %}
+
+    <!-- Submit Button -->
+    <button type="submit" class="btn btn-primary">Add Menu</button>
+</form>
+
+{% if messages %}
+    <div class="alert alert-info">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
 {% endblock %}
