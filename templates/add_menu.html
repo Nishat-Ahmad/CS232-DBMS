@@ -1,84 +1,76 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Add New Menu</h1>
+<div class="menu-section">
+    <div class="container">
+        <h2 style="margin-bottom: 32px;">Add New Menu</h2>
+        <form method="POST">
+            <!-- Menu Name -->
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="name">Menu Name</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
 
-<form method="POST">
-    <!-- Menu Name -->
-    <div class="form-group">
-        <label for="name">Menu Name</label>
-        <input type="text" id="name" name="name" class="form-control" required>
-    </div>
+            <!-- Start Date -->
+            <div class="form-group" style="margin-bottom: 24px;">
+                <label for="start_date">Start Date</label>
+                <input type="date" id="start_date" name="start_date" class="form-control" value="{{ datetime.today().strftime('%Y-%m-%d') }}" required>
+            </div>
 
-    <!-- Start Date -->
-    <!-- Start Date -->
-    <!-- Start Date -->
-    <div class="form-group">
-        <label for="start_date">Start Date</label>
-        <input type="date" id="start_date" name="start_date" class="form-control" value="{{ datetime.today().strftime('%Y-%m-%d') }}" required>
-    </div>
+            <!-- Is Template Checkbox -->
+            <div class="form-group form-check" style="margin-bottom: 32px;">
+                <input type="checkbox" id="is_template" name="is_template" class="form-check-input">
+                <label class="form-check-label" for="is_template">Is Template?</label>
+            </div>
 
+            <hr style="margin: 32px 0;">
 
+            <!-- Meals Table (Days stacked vertically, meals horizontally) -->
+            <div class="form-group" style="margin-bottom: 32px;">
+                <label style="margin-bottom: 16px; display: block;">Menu for the Week:</label>
+                <div style="overflow-x:auto;">
+                <table class="table table-bordered" style="min-width: 700px;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:center;">Day / Meal</th>
+                            {% for meal_type in ['breakfast', 'lunch', 'dinner'] %}
+                                <th style="text-align:center;">{{ meal_type.capitalize() }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] %}
+                        <tr>
+                            <td style="font-weight:bold; text-align:center;">{{ day.capitalize() }}</td>
+                            {% for meal_type in ['breakfast', 'lunch', 'dinner'] %}
+                            <td style="padding: 10px 8px;">
+                                <select id="{{ day }}_{{ meal_type }}" name="{{ day }}_{{ meal_type }}" class="form-control" required style="min-width: 120px;">
+                                    <option value="">Select {{ meal_type.capitalize() }}</option>
+                                    {% for meal in meals %}
+                                    <option value="{{ meal.id }}">{{ meal.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+            </div>
 
-    <!-- Is Template Checkbox -->
-    <div class="form-group form-check">
-        <input type="checkbox" id="is_template" name="is_template" class="form-check-input">
-        <label class="form-check-label" for="is_template">Is Template?</label>
-    </div>
-
-    <hr>
-
-    <!-- Days of the Week -->
-    {% for day in ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] %}
-    <div class="form-group">
-        <label>{{ day.capitalize() }}:</label>
-
-        <!-- Breakfast -->
-        <div class="form-group">
-            <label for="{{ day }}_breakfast">Breakfast</label>
-            <select id="{{ day }}_breakfast" name="{{ day }}_breakfast" class="form-control" required>
-                <option value="">Select Breakfast</option>
-                {% for meal in meals %}
-                <option value="{{ meal.id }}">{{ meal.name }}</option>
+            <!-- Submit Button -->
+            <div style="text-align:center; margin-top: 32px;">
+                <button type="submit" class="btn btn-primary" style="min-width: 180px;">Add Menu</button>
+            </div>
+        </form>
+        {% if messages %}
+            <div class="alert alert-info" style="margin-top: 24px;">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
                 {% endfor %}
-            </select>
-        </div>
-
-        <!-- Lunch -->
-        <div class="form-group">
-            <label for="{{ day }}_lunch">Lunch</label>
-            <select id="{{ day }}_lunch" name="{{ day }}_lunch" class="form-control" required>
-                <option value="">Select Lunch</option>
-                {% for meal in meals %}
-                <option value="{{ meal.id }}">{{ meal.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <!-- Dinner -->
-        <div class="form-group">
-            <label for="{{ day }}_dinner">Dinner</label>
-            <select id="{{ day }}_dinner" name="{{ day }}_dinner" class="form-control" required>
-                <option value="">Select Dinner</option>
-                {% for meal in meals %}
-                <option value="{{ meal.id }}">{{ meal.name }}</option>
-                {% endfor %}
-            </select>
-        </div>
+            </div>
+        {% endif %}
     </div>
-    <hr>
-    {% endfor %}
-
-    <!-- Submit Button -->
-    <button type="submit" class="btn btn-primary">Add Menu</button>
-</form>
-
-{% if messages %}
-    <div class="alert alert-info">
-        {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-    </div>
-{% endif %}
-
+</div>
 {% endblock %}
