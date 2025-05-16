@@ -8,21 +8,21 @@ from sqlalchemy import text
 
 attendance_bp = Blueprint('attendance_bp', __name__, url_prefix='/attendance')
 
-# Admin: View all attendance records
 @attendance_bp.route('/view')
 @login_required
 @admin_required
 def view_attendance():
+    '''Admin: View all attendance records.'''
     db = Session()
     records = db.query(Attendance).options(joinedload(Attendance.user), joinedload(Attendance.meal)).all()
     db.close()
     return render_template('view_attendance.html', records=records)
 
-# Admin: Add attendance record
 @attendance_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def add_attendance():
+    '''Admin: Add attendance record'''
     db = Session()
     users = db.query(User).all()
     meals = db.query(Meal).all()
@@ -46,11 +46,11 @@ def add_attendance():
     db.close()
     return render_template('add_attendance.html', users=users, meals=meals, today=datetime.today().strftime('%Y-%m-%d'))
 
-# Admin: Edit attendance record
 @attendance_bp.route('/edit/<int:attendance_id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_attendance(attendance_id):
+    '''Admin: Edit attendance record'''
     db = Session()
     record = db.query(Attendance).get(attendance_id)
     users = db.query(User).all()
@@ -72,11 +72,11 @@ def edit_attendance(attendance_id):
     db.close()
     return response
 
-# Admin: Delete attendance record
 @attendance_bp.route('/delete/<int:attendance_id>')
 @login_required
 @admin_required
 def delete_attendance(attendance_id):
+    '''Admin: Delete attendance record'''
     db = Session()
     record = db.query(Attendance).get(attendance_id)
     if record:
@@ -88,21 +88,21 @@ def delete_attendance(attendance_id):
     db.close()
     return redirect(url_for('attendance_bp.view_attendance'))
 
-# Admin: View deleted attendance records
 @attendance_bp.route('/deleted')
 @login_required
 @admin_required
 def view_deleted_attendance():
+    '''Admin: View deleted attendance records'''
     session = Session()
     deleted_attendance = session.query(DeletedAttendance).all()
     session.close()
     return render_template('deleted_attendance.html', records=deleted_attendance)
 
-# Admin: Restore deleted attendance record
 @attendance_bp.route('/restore/<int:attendance_id>', methods=['POST'])
 @login_required
 @admin_required
 def restore_attendance(attendance_id):
+    '''Admin: Restore deleted attendance record'''
     session = Session()
     session.execute(text('''
         INSERT INTO attendance (id, user_id, meal_id, date, status)
@@ -114,19 +114,19 @@ def restore_attendance(attendance_id):
     flash('Attendance record restored successfully!', 'success')
     return redirect(url_for('attendance_bp.view_deleted_attendance'))
 
-# Student: View own attendance
 @attendance_bp.route('/my')
 @login_required
 def my_attendance():
+    '''Student: View own attendance'''
     db = Session()
     records = db.query(Attendance).options(joinedload(Attendance.meal)).filter_by(user_id=g.user.id).all()
     db.close()
     return render_template('my_attendance.html', records=records)
 
-# Student: Mark own attendance for a meal if bill is paid or under threshold
 @attendance_bp.route('/mark', methods=['GET', 'POST'])
 @login_required
 def mark_attendance():
+    '''Student: Mark own attendance for a meal if bill is paid or under threshold'''
     db = Session()
     meals = db.query(Meal).all()
     today = datetime.today().date()

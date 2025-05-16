@@ -5,21 +5,21 @@ from sqlalchemy import text
 
 meal_bp = Blueprint('meal_bp', __name__, url_prefix='/meals')
 
-# View all meals
 @meal_bp.route('/view')
 @login_required
 @admin_required
 def view_meals():
+    '''View all meals'''
     session = Session()
     meals = session.query(Meal).all()
     session.close()
     return render_template('view_meals.html', meals=meals)
 
-# Add a meal
 @meal_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def add_meal():
+    '''Add a meal'''
     if request.method == 'POST':
         name = request.form['name']
         time = request.form['time']
@@ -44,11 +44,11 @@ def add_meal():
 
     return render_template('add_meal.html')
 
-# Edit meal
 @meal_bp.route('/edit/<int:meal_id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_meal(meal_id):
+    '''Edit meal'''
     session = Session()
     meal = session.query(Meal).get(meal_id)
 
@@ -70,11 +70,11 @@ def edit_meal(meal_id):
     session.close()
     return render_template('edit_meal.html', meal=meal)
 
-# Delete meal
 @meal_bp.route('/delete/<int:meal_id>')
 @login_required
 @admin_required
 def delete_meal(meal_id):
+    '''Delete meal'''
     session = Session()
     meal = session.query(Meal).get(meal_id)
     if meal:
@@ -86,21 +86,21 @@ def delete_meal(meal_id):
     session.close()
     return redirect(url_for('meal_bp.view_meals'))
 
-# View deleted meals
 @meal_bp.route('/deleted')
 @login_required
 @admin_required
 def view_deleted_meals():
+    '''View deleted meals'''
     session = Session()
     deleted_meals = session.query(DeletedMeal).all()
     session.close()
     return render_template('deleted_meals.html', meals=deleted_meals)
 
-# Restore meal
 @meal_bp.route('/restore/<int:meal_id>', methods=['POST'])
 @login_required
 @admin_required
 def restore_meal(meal_id):
+    '''Restore meal'''
     session = Session()
     session.execute(text('''
         INSERT INTO meals (id, name, time, price, inventory)

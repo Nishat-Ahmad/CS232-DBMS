@@ -9,6 +9,7 @@ user_bp = Blueprint('user_bp', __name__, url_prefix='/users')
 @login_required
 @admin_required
 def view_users():
+    '''Admin: Shows admin data of all the users.'''
     db = Session()
     students = db.query(Student).all()
     admins = db.query(Admin).all()
@@ -19,6 +20,7 @@ def view_users():
 @login_required
 @admin_required
 def add_user():
+    '''Admin: Allows admin to add a user.'''
     role = 'student' 
 
     if request.method == 'POST':
@@ -50,6 +52,7 @@ def add_user():
 @login_required
 @admin_required
 def edit_user(user_id):
+    '''Admin: Allows admin to update user data.'''
     db = Session()
     user = db.query(User).get(user_id)
 
@@ -73,6 +76,7 @@ def edit_user(user_id):
 @login_required
 @admin_required
 def delete_user(user_id):
+    '''Deletes a user data from the table.'''
     db = Session()
     user = db.query(User).get(user_id)
     db.delete(user)
@@ -85,6 +89,7 @@ def delete_user(user_id):
 @login_required
 @admin_required
 def view_deleted_users():
+    '''Fetches data from the deleted table of users.'''
     session = Session()
     deleted_users = session.query(DeletedUser).all()
     session.close()
@@ -94,6 +99,7 @@ def view_deleted_users():
 @login_required
 @admin_required
 def restore_user(user_id):
+    '''Restores user from deleted table.'''
     session = Session()
     # Check if user with same id already exists in users table
     existing_user = session.query(User).filter_by(id=user_id).first()

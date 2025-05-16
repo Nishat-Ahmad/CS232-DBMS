@@ -6,11 +6,11 @@ from sqlalchemy.orm import joinedload
 
 notification_bp = Blueprint('notification_bp', __name__, url_prefix='/notifications')
 
-# Admin: Create new notification
 @notification_bp.route('/create', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def create_notification():
+    '''Admin: Create new notification'''
     if request.method == 'POST':
         message = request.form['message']
         target_role = request.form['target_role']
@@ -36,22 +36,21 @@ def create_notification():
 
     return render_template('create_notification.html')
 
-# Admin: View all notifications
 @notification_bp.route('/all')
 @login_required
 @admin_required
 def view_all_notifications():  
+    '''Admin: View all notifications'''
     db_session = Session()
     notifications = db_session.query(Notification).options(joinedload(Notification.admin)).all()
     db_session.close()
     return render_template('all_notifications.html', notifications=notifications)
 
-
-# Student: View notifications for student
 @notification_bp.route('/student')
 @login_required
 @student_required
 def view_student_notifications():
+    '''Student: View notifications for student'''
     student_id = flask_session.get('user_id')
     db_session = Session()
 
@@ -64,11 +63,11 @@ def view_student_notifications():
     db_session.close()
     return render_template('student_notifications.html', notifications=notifications, read_ids=read_ids)
 
-# Student: Mark notification as read
 @notification_bp.route('/mark_read/<int:notification_id>', methods=['POST'])
 @login_required
 @student_required
 def mark_as_read(notification_id):
+    '''Student: Mark notification as read'''
     student_id = flask_session.get('user_id')
     db_session = Session()
 

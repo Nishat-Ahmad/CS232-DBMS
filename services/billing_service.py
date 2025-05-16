@@ -2,6 +2,7 @@ from database.models import Billing, Attendance, Meal, Notification
 from sqlalchemy import func
 
 def calculate_student_monthly_bill(session, student_id, month, year):
+    '''Calculates the total bill for a student for a given month and year.'''
     total = session.query(func.sum(Meal.price)) \
         .join(Attendance, Attendance.meal_id == Meal.id) \
         .filter(Attendance.user_id == student_id) \
@@ -12,6 +13,8 @@ def calculate_student_monthly_bill(session, student_id, month, year):
     return total or 0
 
 def update_billing_and_notify(session, student_id, date, meal_id, threshold=10000):
+    '''Updates the student's bill when they attend a meal and 
+    sends a notification if their bill exceeds a threshold.'''
     month = date.strftime('%B')
     year = date.year
     meal_price = session.query(Meal.price).filter(Meal.id == meal_id).scalar() or 0

@@ -2,6 +2,7 @@ from functools import wraps
 from flask import session, redirect, url_for, flash
 
 def login_required(f):
+    '''Ensures the user is logged in.'''
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
@@ -11,6 +12,7 @@ def login_required(f):
     return decorated_function
 
 def admin_required(f):
+    '''Ensures the user is an admin.'''
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_role' not in session or session['user_role'] != 'admin':
@@ -20,6 +22,7 @@ def admin_required(f):
     return decorated_function
 
 def student_required(f):
+    '''Ensures the user is a student.'''
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_role' not in session or session['user_role'] != 'student':

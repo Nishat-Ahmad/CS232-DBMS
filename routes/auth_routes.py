@@ -5,6 +5,7 @@ auth_bp = Blueprint('auth_bp', __name__, url_prefix='/auth')
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    '''handles user login'''
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
@@ -12,8 +13,6 @@ def login():
         db_session = Session()
         user = db_session.query(User).filter_by(email=email).first()
 
-        print("Email:", email)
-        print("User in DB:", user)
         if user:
             print("Password match:", (user.password, password))
             print("User ID:", user.id, "Role:", user.role)
@@ -32,6 +31,7 @@ def login():
 
 @auth_bp.route('/logout')
 def logout():
+    '''handles user logout'''
     flask_session.clear()
     flash('Logged out.', 'info')
     return redirect(url_for('index'))

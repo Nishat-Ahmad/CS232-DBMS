@@ -10,6 +10,7 @@ complaint_bp = Blueprint('complaint_bp', __name__, url_prefix='/complaint')
 @login_required
 @student_required
 def create_complaint():
+    '''For the student, used to create a complaint.'''
     if request.method == 'POST':
         message = request.form['message']
         student_id = flask_session.get('user_id')
@@ -34,6 +35,7 @@ def create_complaint():
 @login_required
 @admin_required
 def view_complaints():
+    '''Admin: Fetches all complaints not yet resolved.'''
     db_session = Session()
     complaints = db_session.query(Complaint) \
         .options(joinedload(Complaint.student)) \
@@ -46,6 +48,7 @@ def view_complaints():
 @login_required
 @admin_required
 def view_resolved_complaints():
+    '''Shows complaints to admin that have been resolved.'''
     db_session = Session()
     complaints = db_session.query(Complaint) \
         .options(joinedload(Complaint.student)) \
@@ -58,6 +61,7 @@ def view_resolved_complaints():
 @login_required
 @admin_required
 def resolve_complaint(id):
+    '''Tells what to do when the admin resolves a complaint.'''
     db_session = Session()
     complaint = db_session.get(Complaint, id) 
     if complaint:

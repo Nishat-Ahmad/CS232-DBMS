@@ -3,25 +3,24 @@ from database.models import Menu, MenuDay, Meal, Session, DeletedMenu
 from datetime import datetime
 from sqlalchemy import text
 from utils.auth_decorators import login_required, admin_required
+from datetime import datetime
 
 menu_bp = Blueprint('menu_bp', __name__)
 
-# View all menus
 @menu_bp.route('/menus')
 @login_required
 def view_menus():
+    '''View all menus'''
     session = Session()
     menus = session.query(Menu).all()
     session.close()
     return render_template('view_menus.html', menus=menus)
 
-# Create a new menu
-from datetime import datetime
-
 @menu_bp.route('/add', methods=['GET', 'POST'])
 @login_required
 @admin_required 
 def add_menu():
+    '''Create a new menu'''
     if request.method == 'POST':
         name = request.form['name']
         start_date_str = request.form['start_date']

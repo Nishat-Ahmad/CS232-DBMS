@@ -8,6 +8,7 @@ billing_bp = Blueprint('billing_bp', __name__, url_prefix='/billing')
 @billing_bp.route('/my')
 @login_required
 def my_billing():
+    '''Shows the logged-in student their bills.'''
     db = Session()
     bills = db.query(Billing).filter_by(student_id=g.user.id).all()
     today = datetime.today()
@@ -27,6 +28,7 @@ def my_billing():
 @billing_bp.route('/pay/<int:bill_id>', methods=['POST'])
 @login_required
 def pay_bill(bill_id):
+    '''Lets a student request to pay a specific bill.'''
     db = Session()
     bill = db.query(Billing).filter_by(id=bill_id, student_id=g.user.id).first()
     today = datetime.today()
@@ -55,6 +57,7 @@ def pay_bill(bill_id):
 @login_required
 @admin_required
 def pending_bills():
+    '''(Admin only) Shows all bills that are pending approval.'''
     if not g.user or g.user.role != 'admin':
         flash('Access denied.', 'error')
         return redirect(url_for('index'))
@@ -67,6 +70,7 @@ def pending_bills():
 @login_required
 @admin_required
 def approve_bill(bill_id):
+    '''(Admin only) Approves a pending bill.'''
     if not g.user or g.user.role != 'admin':
         flash('Access denied.', 'error')
         return redirect(url_for('index'))
@@ -85,6 +89,7 @@ def approve_bill(bill_id):
 @login_required
 @admin_required
 def all_bills():
+    '''(Admin only) Shows all bills for all students.'''
     db = Session()
     from sqlalchemy.orm import joinedload
     bills = db.query(Billing).options(joinedload(Billing.student)).all()
@@ -95,6 +100,7 @@ def all_bills():
 @login_required
 @admin_required
 def billing_summary():
+    '''(Admin only) Shows a summary of all student monthly billings.'''
     db = Session()
     bills = db.query(StudentMonthlyBilling).all()
     db.close()
